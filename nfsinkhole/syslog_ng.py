@@ -27,12 +27,12 @@ from .utils import popen_wrapper
 from .selinux import SELinux
 import logging
 import os
+import subprocess
 
 log = logging.getLogger(__name__)
 se_linux = SELinux()
 
 
-# TODO: this is just a placeholder, this class is not finished or used yet
 class SyslogNG:
     """
     The class for managing syslog-ng checks and configuration.
@@ -46,9 +46,9 @@ class SyslogNG:
         self.is_systemd = is_systemd
 
         # Raise error if syslog-ng is not found
-        if not os.path.exists('/usr/sbin/syslog-ng'):
+        if not os.path.exists('/sbin/syslog-ng'):
 
-            log.debug('Path not found: /usr/sbin/syslog-ng')
+            log.debug('Path not found: /sbin/syslog-ng')
             raise BinaryNotFound('syslog-ng was not detected.')
 
     def get_version(self):
@@ -82,10 +82,45 @@ class SyslogNG:
 
         log.info('Associating syslog-ng config with SELinux')
 
-        se_linux.associate('/etc/syslog-ng/nfsinkhole.conf')
+        se_linux.associate('/etc/syslog-ng/conf.d/nfsinkhole.conf')
+
+    def check_confd(self):
+        """
+        The function to check syslog-ng.conf for conf.d inclusion, and
+        create the @include statement if missing. Will also create the conf.d
+        directory, if missing.
+        """
+
+        log.info('Checking syslog-ng.conf for conf.d inclusion.')
+
+        out, err = popen_wrapper(
+            ['/usr/bin/sudo', 'grep',
+             '"@include \\"/etc/syslog-ng/conf.d/\\""',
+             '/etc/syslog-ng/syslog-ng.conf'
+             ]
+        )
+
+        if not out:
+
+            log.info('conf.d inclusion not found in syslog-ng.conf, appending')
+
+            subprocess.call(
+                ['sudo /bin/sh -c '
+                 '\'echo "@include \\"/etc/syslog-ng/conf.d/\\"" >> '
+                 '/etc/syslog-ng/syslog-ng.conf\''],
+                shell=True
+            )
+
+        log.info('Checking for /etc/syslog-ng/conf.d')
+
+        # Raise error if conf.d is not found
+        if not os.path.exists('/etc/syslog-ng/conf.d'):
+
+            log.info('/etc/syslog-ng/conf.d not found, creating directory')
+
+            popen_wrapper(['/usr/bin/sudo', 'mkdir', '/etc/syslog-ng/conf.d'])
 
     # TODO: syslog target options; currently, forwarding config is manual
-    # TODO: actual config, currently writes nothing
     def create_config(self, prefix='[nfsinkhole] '):
         """
         The function for creating the syslog-ng config. (incomplete/unused)
@@ -98,21 +133,28 @@ class SyslogNG:
 
         log.debug('Writing nfsinkhole.conf')
         with open("nfsinkhole.conf", "wt") as syslog_config:
-            syslog_config.write('')
+            tmp = (
+                'destination d_nfsinkhole {{ '
+                'file("/var/log/nfsinkhole-events.log"); }};\n'
+                'filter f_nfsinkhole {{ facility(kern) and message({0}); }};\n'
+                'log {{ source(s_sys); filter(f_nfsinkhole); '
+                'destination(d_nfsinkhole); }};'
+            )
+            syslog_config.write(
+                tmp.format(
+                    prefix.replace('[', '\\[').replace(']', '\\]').replace(
+                        ' ', '\\s')
+                )
+            )
 
-        log.debug('Moving nfsinkhole.conf to /etc/syslog-ng')
+        log.debug('Moving nfsinkhole.conf to /etc/syslog-ng/conf.d')
         popen_wrapper(['/usr/bin/sudo', 'mv', 'nfsinkhole.conf',
-                       '/etc/syslog-ng'])
-
-        log.debug('Setting execute permissions for '
-                  '/etc/syslog-ng/nfsinkhole.conf')
-        popen_wrapper(['/usr/bin/sudo', 'chmod', '-x',
-                       '/etc/syslog-ng/nfsinkhole.conf'])
+                       '/etc/syslog-ng/conf.d'])
 
         log.debug('Setting root ownership for '
-                  '/etc/syslog-ng/nfsinkhole.conf')
+                  '/etc/syslog-ng/conf.d/nfsinkhole.conf')
         popen_wrapper(['/usr/bin/sudo', 'chown', 'root:root',
-                       '/etc/syslog-ng/nfsinkhole.conf'])
+                       '/etc/syslog-ng/conf.d/nfsinkhole.conf'])
 
     def delete_config(self):
         """
@@ -121,9 +163,9 @@ class SyslogNG:
 
         log.info('Deleting syslog-ng config')
 
-        log.debug('Removing file: /etc/syslog-ng/nfsinkhole.conf')
+        log.debug('Removing file: /etc/syslog-ng/conf.d/nfsinkhole.conf')
         popen_wrapper(
-            ['/usr/bin/sudo', 'rm', '/etc/syslog-ng/nfsinkhole.conf'])
+            ['/usr/bin/sudo', 'rm', '/etc/syslog-ng/conf.d/nfsinkhole.conf'])
 
     def restart(self):
         """
