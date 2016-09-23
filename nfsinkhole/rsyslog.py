@@ -115,11 +115,6 @@ class RSyslog:
         popen_wrapper(['/usr/bin/sudo', 'mv', 'nfsinkhole.conf',
                        '/etc/rsyslog.d'])
 
-        log.debug('Setting execute permissions for '
-                  '/etc/rsyslog.d/nfsinkhole.conf')
-        popen_wrapper(['/usr/bin/sudo', 'chmod', '-x',
-                       '/etc/rsyslog.d/nfsinkhole.conf'])
-
         log.debug('Setting root ownership for '
                   '/etc/rsyslog.d/nfsinkhole.conf')
         popen_wrapper(['/usr/bin/sudo', 'chown', 'root:root',

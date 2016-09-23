@@ -2,10 +2,20 @@
 nfsinkhole
 ==========
 
+.. image:: https://travis-ci.org/secynic/nfsinkhole.svg?branch=master
+    :target: https://travis-ci.org/secynic/nfsinkhole
+.. image:: https://coveralls.io/repos/github/secynic/nfsinkhole/badge.svg?branch=master
+    :target: https://coveralls.io/github/secynic/nfsinkhole?branch=master
 .. image:: https://img.shields.io/badge/license-BSD%202--Clause-blue.svg
     :target: https://github.com/secynic/nfsinkhole/tree/master/LICENSE.txt
 .. image:: https://img.shields.io/badge/python-2.6%2C%202.7%2C%203.0+-blue.svg
 .. image:: https://img.shields.io/badge/os-RHEL%2FCentOS%206%2F7-blue.svg
+.. image:: https://img.shields.io/badge/docs-release%20v0.1.0-green.svg?style=flat
+    :target: https://nfsinkhole.readthedocs.io/en/v0.1.0
+.. image:: https://readthedocs.org/projects/pip/badge/?version=latest
+    :target: https://nfsinkhole.readthedocs.io/en/latest
+.. image:: https://img.shields.io/badge/docs-dev-yellow.svg?style=flat
+    :target: https://nfsinkhole.readthedocs.io/en/dev
 
 .. warning::
 

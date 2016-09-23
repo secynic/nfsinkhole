@@ -1,0 +1,8 @@
+[report]
+omit =
+    */python?.?/*
+    */site-packages/nose/*
+    nfsinkhole/docs/*
+    nfsinkhole/examples/*
+    nfsinkhole/scripts/*
+    nfsinkhole/tests/*

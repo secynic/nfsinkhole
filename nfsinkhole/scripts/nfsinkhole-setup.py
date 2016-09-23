@@ -29,10 +29,11 @@ import subprocess
 import time
 from nfsinkhole.apparmor import AppArmor
 from nfsinkhole.exceptions import (IPTablesError, IPTablesExists,
-                                   IPTablesNotExists)
+                                   IPTablesNotExists, BinaryNotFound)
 from nfsinkhole.iptables import IPTablesSinkhole
 from nfsinkhole.rsyslog import RSyslog
 from nfsinkhole.service import SystemService
+from nfsinkhole.syslog_ng import SyslogNG
 from nfsinkhole.tcpdump import TCPDump
 from nfsinkhole.utils import (ANSI, popen_wrapper, set_system_timezone)
 
@@ -187,9 +188,21 @@ system_service = SystemService(
 )
 is_systemd, svc_path = system_service.check_systemd()
 
-# Get the rsyslog version
-r_syslog = RSyslog(is_systemd)
-rsyslog_version = r_syslog.get_version()
+try:
+
+    # Get the rsyslog version
+    r_syslog = RSyslog(is_systemd)
+    rsyslog_version = r_syslog.get_version()
+    syslog_ng = None
+
+except BinaryNotFound:
+
+    r_syslog = None
+    rsyslog_version = None
+
+    # Get the syslog-ng version
+    syslog_ng = SyslogNG(is_systemd)
+    syslog_ng_version = syslog_ng.get_version()
 
 # Initialize the AppArmor object
 app_armor = AppArmor()
@@ -227,11 +240,21 @@ if script_args.uninstall:
                  'for usr.sbin.tcpdump')
         app_armor.enable_enforcement('usr.sbin.tcpdump')
 
-    log.info('Deleting rsyslog config for nfsinkhole')
-    r_syslog.delete_config()
+    if r_syslog:
 
-    log.info('Restarting rsyslog')
-    r_syslog.restart()
+        log.info('Deleting rsyslog config for nfsinkhole')
+        r_syslog.delete_config()
+
+        log.info('Restarting rsyslog')
+        r_syslog.restart()
+
+    else:
+
+        log.info('Deleting syslog-ng config for nfsinkhole')
+        syslog_ng.delete_config()
+
+        log.info('Restarting syslog-ng')
+        syslog_ng.restart()
 
     log.info('Deleting nfsinkhole service')
     system_service.delete_service()
@@ -272,14 +295,30 @@ if script_args.install:
                  'for usr.sbin.tcpdump')
         app_armor.disable_enforcement('usr.sbin.tcpdump')
 
-    log.info('Writing rsyslog config')
-    r_syslog.create_config(script_args.prefix)
+    if r_syslog:
 
-    log.info('Associating rsyslog config with SELinux')
-    r_syslog.selinux_associate()
+        log.info('Writing rsyslog config')
+        r_syslog.create_config(script_args.prefix)
 
-    log.info('Restarting rsyslog')
-    r_syslog.restart()
+        log.info('Associating rsyslog config with SELinux')
+        r_syslog.selinux_associate()
+
+        log.info('Restarting rsyslog')
+        r_syslog.restart()
+
+    else:
+
+        log.info('Checking syslog-ng conf.d')
+        syslog_ng.check_confd()
+
+        log.info('Writing syslog-ng config')
+        syslog_ng.create_config(script_args.prefix)
+
+        log.info('Associating syslog-ng config with SELinux')
+        syslog_ng.selinux_associate()
+
+        log.info('Restarting syslog-ng')
+        syslog_ng.restart()
 
     log.info('Generating and writing nfsinkhole service')
     system_service.create_service()
