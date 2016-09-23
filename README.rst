@@ -8,7 +8,7 @@ nfsinkhole
     :target: https://coveralls.io/github/secynic/nfsinkhole?branch=master
 .. image:: https://img.shields.io/badge/license-BSD%202--Clause-blue.svg
     :target: https://github.com/secynic/nfsinkhole/tree/master/LICENSE.txt
-.. image:: https://img.shields.io/badge/python-2.6%2C%202.7%2C%203.0+-blue.svg
+.. image:: https://img.shields.io/badge/python-2.6%2C%202.7%2C%203.3+-blue.svg
 .. image:: https://img.shields.io/badge/os-RHEL%2FCentOS%206%2F7-blue.svg
 .. image:: https://img.shields.io/badge/docs-release%20v0.1.0-green.svg?style=flat
     :target: https://nfsinkhole.readthedocs.io/en/v0.1.0
@@ -47,9 +47,9 @@ Features
 * Simple install script
 * Installs as a init.d/systemctl service
 * Service modifies iptables on start/stop, no need to persist iptables
-* rsyslog and syslog-ng (pending) supported
+* rsyslog and syslog-ng supported
 * RedHat/CentOS 6/7 tested
-* Python 2.6+ and 3.0+ supported
+* Python 2.6+ and 3.3+ supported
 * Built-in support for dealing with SELinux/AppArmor
 * Packet capture of sinkhole traffic (printed output to log for tcpdump v4.5+)
 * Useful set of utilities
@@ -61,9 +61,7 @@ Planned Improvements
 ====================
 
 * API/class documentation
-* syslog-ng support (currently partially built; unused)
 * Tests via travis-ci/docker
-* Coverage via coverage.io
 * Exception handling overhaul
 * Set logging level (currently debug)
 * BIND/Microsoft/etc DNS server configuration documentation/examples
@@ -128,7 +126,7 @@ Python 2.6::
 
     argparse
 
-Python 2.7, 3.0+::
+Python 2.7, 3.3+::
 
     None!
 
