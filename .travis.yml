@@ -1,0 +1,18 @@
+language: python
+python:
+  - 2.6
+  - 2.7
+  - 3.0
+  - 3.1
+  - 3.2
+  - 3.3
+  - 3.4
+  - 3.5
+install:
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.6* ]]; then pip install -r requirements/python2.6.txt --use-mirrors; fi
+  - pip install coveralls
+  - python setup.py -q install
+script:
+  - nosetests -v -w nfsinkhole --include=os --with-coverage --cover-package=nfsinkhole
+after_success:
+  - coveralls --rcfile=.coveragerc
