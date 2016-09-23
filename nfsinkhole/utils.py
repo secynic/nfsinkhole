@@ -93,7 +93,7 @@ def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True):
 
             log.debug('[{0}] {1}'.format(
                 ' '.join(cmd_arr),
-                line.replace('\n', '')
+                line.decode('utf-8').replace('\n', '')
             ))
 
     # Log stdout as a single entry.
@@ -106,7 +106,7 @@ def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True):
     for line in err_arr:
         log.error('[{0}] {1}'.format(
             ' '.join(cmd_arr),
-            line.replace('\n', '')
+            line.decode('utf-8').replace('\n', '')
         ))
 
     # If any errors, iterate them and write to log, then raise
@@ -115,7 +115,7 @@ def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True):
         arr = err.splitlines()
         raise SubprocessError(
             'Error encountered when running process "{0}":\n{1}'.format(
-                ' '.join(cmd_arr), '\n'.join(arr)
+                ' '.join(cmd_arr), b'\n'.join(arr).decode('utf-8')
             )
         )
 
@@ -176,7 +176,7 @@ def get_interface_addr(interface=None):
     log.debug('Attempting IP extract/conversion... '.format(interface))
     try:
 
-        # TODO: is this faster than ifconfig parsing?
+        # TODO: is this faster than ifconfig/ip route parsing?
         return socket.inet_ntoa(
             fcntl.ioctl(
                 s.fileno(),
