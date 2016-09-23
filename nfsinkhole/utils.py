@@ -93,7 +93,7 @@ def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True):
 
             log.debug('[{0}] {1}'.format(
                 ' '.join(cmd_arr),
-                line.decode('utf-8').replace('\n', '')
+                line.replace(b'\n', b'').decode('ascii', 'ignore')
             ))
 
     # Log stdout as a single entry.
@@ -106,7 +106,7 @@ def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True):
     for line in err_arr:
         log.error('[{0}] {1}'.format(
             ' '.join(cmd_arr),
-            line.decode('utf-8').replace('\n', '')
+            line.replace(b'\n', b'').decode('ascii', 'ignore')
         ))
 
     # If any errors, iterate them and write to log, then raise
@@ -115,7 +115,7 @@ def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True):
         arr = err.splitlines()
         raise SubprocessError(
             'Error encountered when running process "{0}":\n{1}'.format(
-                ' '.join(cmd_arr), b'\n'.join(arr).decode('utf-8')
+                ' '.join(cmd_arr), b'\n'.join(arr).decode('ascii', 'ignore')
             )
         )
 
