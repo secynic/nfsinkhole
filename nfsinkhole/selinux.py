@@ -43,8 +43,13 @@ class SELinux:
         The function for associating a file path with selinux
         """
 
-        log.info('Associating {0} with SELinux'.format(str(path)))
+        if self.exists:
 
-        # TODO: Check if selinux and path exist
-        popen_wrapper(['/usr/bin/sudo', '/sbin/restorecon',
-                       '-v', str(path)])
+            log.info('Associating {0} with SELinux'.format(str(path)))
+
+            popen_wrapper(['/usr/bin/sudo', '/sbin/restorecon',
+                           '-v', str(path)])
+
+        else:
+
+            log.info('SELinux not found, skipping association')
