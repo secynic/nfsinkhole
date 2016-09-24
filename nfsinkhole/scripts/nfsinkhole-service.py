@@ -39,6 +39,7 @@ logging.basicConfig(filename='/tmp/nfsinkhole-service.log', format=LOG_FORMAT,
                     level=logging.DEBUG, datefmt='%Y-%m-%dT%H:%M:%S')
 logging.Formatter.converter = time.gmtime
 log = logging.getLogger(__name__)
+log.debug('nfsinkhole-service.py called')
 
 # Setup the arg parser.
 parser = argparse.ArgumentParser(
