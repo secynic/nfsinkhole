@@ -31,6 +31,9 @@ script:
   - sudo docker exec nfsinkholevm /bin/sh -c "cd /root/nfsinkhole/ && python setup.py install"
   - sudo docker exec --privileged nfsinkholevm /bin/sh -c "python /usr/bin/nfsinkhole-setup.py --interface eth1 --install --pcap"
   - sudo docker exec nfsinkholevm /bin/sh -c "cat /var/log/nfsinkhole-setup.log"
+  - sudo docker exec --privileged nfsinkholevm /bin/sh -c "systemctl start nfsinkhole.service"
+  - sudo docker exec --privileged nfsinkholevm /bin/sh -c "systemctl status nfsinkhole.service"
+  - sudo docker exec nfsinkholevm /bin/sh -c "cat /var/log/nfsinkhole-service.log"
 
 after_success:
   - coveralls --rcfile=.coveragerc
