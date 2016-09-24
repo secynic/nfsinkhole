@@ -17,7 +17,7 @@ install:
 script:
   - nosetests -v -w nfsinkhole --include=docker --with-coverage --cover-package=nfsinkhole
   - sudo docker network create --driver=bridge sinknet --subnet=172.19.0.0/24
-  - sudo docker run -d --name nfsinkholevm -t centos:7 bash
+  - sudo docker run -d -e "container=docker" -v /sys/fs/cgroup:/sys/fs/cgroup --privileged --name nfsinkholevm -t centos:7 /usr/sbin/init
   - sudo docker network connect sinknet nfsinkholevm
   - sudo docker ps -a | grep nfsinkholevm
   - sudo docker network ls
