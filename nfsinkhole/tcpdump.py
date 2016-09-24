@@ -81,12 +81,17 @@ class TCPDump:
 
                 # TODO: eliminate loop, re search the whole output
                 if 'tcpdump version' in o:
-                    m = re.search('tcpdump\sversion\s([0-9]+\.[0-9]+)?.*', o)
 
+                    m = re.search('tcpdump\sversion\s([0-9]+\.[0-9]+)?.*', o)
                     try:
+
                         tcpdump_version = m.group(1)
+                        log.info('tcpdump version found: {0}'
+                                 ''.format(tcpdump_version))
 
                     except IndexError:
+
+                        log.info('tcpdump version not found')
                         pass
 
         return tcpdump_version
