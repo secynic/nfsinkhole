@@ -35,7 +35,7 @@ script:
   - sudo docker exec --privileged nfsinkholevm /bin/sh -c "systemctl status nfsinkhole.service"
   - sudo docker exec nfsinkholevm /bin/sh -c "ps aux | grep /usr/sbin/tcpdump"
   - sudo docker exec --privileged nfsinkholevm /bin/sh -c "systemctl stop nfsinkhole.service"
-  - sudo docker exec --privileged nfsinkholevm /bin/sh -c "systemctl status nfsinkhole.service"
+  - sudo docker exec --privileged nfsinkholevm /bin/sh -c "systemctl status nfsinkhole.service || true"
   - sudo docker exec nfsinkholevm /bin/sh -c "ps aux | grep /usr/sbin/tcpdump"
   - sudo docker exec nfsinkholevm /bin/sh -c "cat /var/log/nfsinkhole-service.log"
 
