@@ -27,6 +27,7 @@ import logging
 import os
 
 log = logging.getLogger(__name__)
+uid = os.geteuid()  # Unix req; autodoc_mock_imports for Sphinx cross platform
 
 
 class SELinux:
@@ -47,8 +48,13 @@ class SELinux:
 
             log.info('Associating {0} with SELinux'.format(str(path)))
 
-            popen_wrapper(['/usr/bin/sudo', '/sbin/restorecon',
-                           '-v', str(path)])
+            cmd = ['/sbin/restorecon', '-v', str(path)]
+
+            # run sudo if not root
+            if uid != 0:
+                cmd = ['/usr/bin/sudo'] + cmd
+
+            popen_wrapper(cmd)
 
         else:
 

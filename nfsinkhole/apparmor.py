@@ -27,6 +27,7 @@ import logging
 import os
 
 log = logging.getLogger(__name__)
+uid = os.geteuid()  # Unix req; autodoc_mock_imports for Sphinx cross platform
 
 
 class AppArmor:
@@ -56,14 +57,27 @@ class AppArmor:
 
             log.debug('AppArmor found; disabling enforcement.')
 
-            popen_wrapper([
-                '/usr/bin/sudo', 'ln', '-s',
+            cmd = [
+                'ln', '-s',
                 '/etc/apparmor.d/{0}'.format(module),
                 '/etc/apparmor.d/disable/'
-            ])
+            ]
+
+            # run sudo if not root
+            if uid != 0:
+                cmd = ['/usr/bin/sudo'] + cmd
+
+            popen_wrapper(cmd)
 
             log.debug('Restarting AppArmor service')
-            popen_wrapper(['/usr/bin/sudo', '/etc/init.d/apparmor', 'restart'])
+
+            cmd = ['/etc/init.d/apparmor', 'restart']
+
+            # run sudo if not root
+            if uid != 0:
+                cmd = ['/usr/bin/sudo'] + cmd
+
+            popen_wrapper(cmd)
 
             return True
 
@@ -90,11 +104,23 @@ class AppArmor:
 
             log.debug('AppArmor found; enabling enforcement.')
 
-            popen_wrapper(['/usr/bin/sudo', 'rm',
-                           '/etc/apparmor.d/disable/{0}'.format(module)])
+            cmd = ['rm', '/etc/apparmor.d/disable/{0}'.format(module)]
+
+            # run sudo if not root
+            if uid != 0:
+                cmd = ['/usr/bin/sudo'] + cmd
+
+            popen_wrapper(cmd)
 
             log.debug('Restarting AppArmor service')
-            popen_wrapper(['/usr/bin/sudo', '/etc/init.d/apparmor', 'restart'])
+
+            cmd = ['/etc/init.d/apparmor', 'restart']
+
+            # run sudo if not root
+            if uid != 0:
+                cmd = ['/usr/bin/sudo'] + cmd
+
+            popen_wrapper(cmd)
 
             return True
 

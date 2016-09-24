@@ -30,6 +30,7 @@ import os
 import re
 
 log = logging.getLogger(__name__)
+uid = os.geteuid()  # Unix req; autodoc_mock_imports for Sphinx cross platform
 se_linux = SELinux()
 
 
@@ -112,13 +113,25 @@ class RSyslog:
                           '/var/log/nfsinkhole-events.log'))
 
         log.debug('Moving nfsinkhole.conf to /etc/rsyslog.d')
-        popen_wrapper(['/usr/bin/sudo', 'mv', 'nfsinkhole.conf',
-                       '/etc/rsyslog.d'])
+
+        cmd = ['mv', 'nfsinkhole.conf', '/etc/rsyslog.d']
+
+        # run sudo if not root
+        if uid != 0:
+            cmd = ['/usr/bin/sudo'] + cmd
+
+        popen_wrapper(cmd)
 
         log.debug('Setting root ownership for '
                   '/etc/rsyslog.d/nfsinkhole.conf')
-        popen_wrapper(['/usr/bin/sudo', 'chown', 'root:root',
-                       '/etc/rsyslog.d/nfsinkhole.conf'])
+
+        cmd = ['chown', 'root:root', '/etc/rsyslog.d/nfsinkhole.conf']
+
+        # run sudo if not root
+        if uid != 0:
+            cmd = ['/usr/bin/sudo'] + cmd
+
+        popen_wrapper(cmd)
 
     def delete_config(self):
         """
@@ -128,8 +141,14 @@ class RSyslog:
         log.info('Deleting rsyslog config')
 
         log.debug('Removing file: /etc/rsyslog.d/nfsinkhole.conf')
-        popen_wrapper(
-            ['/usr/bin/sudo', 'rm', '/etc/rsyslog.d/nfsinkhole.conf'])
+
+        cmd = ['rm', '/etc/rsyslog.d/nfsinkhole.conf']
+
+        # run sudo if not root
+        if uid != 0:
+            cmd = ['/usr/bin/sudo'] + cmd
+
+        popen_wrapper(cmd)
 
     def restart(self):
         """
@@ -141,10 +160,23 @@ class RSyslog:
         if self.is_systemd:
 
             log.debug('Restarting systemd rsyslog service (via systemctl)')
-            popen_wrapper(['/usr/bin/sudo', 'systemctl', 'restart',
-                           'rsyslog.service'])
+
+            cmd = ['systemctl', 'restart', 'rsyslog.service']
+
+            # run sudo if not root
+            if uid != 0:
+                cmd = ['/usr/bin/sudo'] + cmd
+
+            popen_wrapper(cmd)
 
         else:
 
             log.debug('Restarting init.d rsyslog service (via service)')
-            popen_wrapper(['/usr/bin/sudo', 'service', 'rsyslog', 'restart'])
+
+            cmd = ['service', 'rsyslog', 'restart']
+
+            # run sudo if not root
+            if uid != 0:
+                cmd = ['/usr/bin/sudo'] + cmd
+
+            popen_wrapper(cmd)

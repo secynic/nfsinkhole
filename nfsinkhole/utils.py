@@ -211,9 +211,13 @@ def set_system_timezone(timezone='UTC'):
     log.info('Setting system timzone to {0}.'.format(timezone))
 
     # Try setting the timzone with timedatectl
-    out, err = popen_wrapper([
-        '/usr/bin/sudo', 'timedatectl', 'set-timezone', timezone
-    ])
+    cmd = ['timedatectl', 'set-timezone', timezone]
+
+    # run sudo if not root
+    if uid != 0:
+        cmd = ['/usr/bin/sudo'] + cmd
+
+    out, err = popen_wrapper(cmd)
 
     if out or err:
 
@@ -222,19 +226,26 @@ def set_system_timezone(timezone='UTC'):
                  'errors).'.format(timezone))
 
         # Backup localtime to /root/localtime.old
-        out, err = popen_wrapper(
-            ['/usr/bin/sudo', 'cp', '/etc/localtime', '/root/localtime.old'],
-            raise_err=True
-        )
+        cmd = ['cp', '/etc/localtime', '/root/localtime.old']
+
+        # run sudo if not root
+        if uid != 0:
+            cmd = ['/usr/bin/sudo'] + cmd
+
+        out, err = popen_wrapper(cmd, raise_err=True)
 
         # stdout is not expected on success.
         if out and len(out) > 0:
             raise SubprocessError(out)
 
         # Remove /etc/localtime
-        out, err = popen_wrapper(
-            ['/usr/bin/sudo', 'rm', '/etc/localtime'], raise_err=True
-        )
+        cmd = ['rm', '/etc/localtime']
+
+        # run sudo if not root
+        if uid != 0:
+            cmd = ['/usr/bin/sudo'] + cmd
+
+        out, err = popen_wrapper(cmd, raise_err=True)
 
         # stdout is not expected on success.
         if out and len(out) > 0:
@@ -242,10 +253,16 @@ def set_system_timezone(timezone='UTC'):
 
         # Create symbolic link to /usr/share/zoneinfo/{timezone} for
         # /etc/localtime
-        out, err = popen_wrapper([
-            '/usr/bin/sudo', 'ln',
-            '-s', '/usr/share/zoneinfo/{0}'.format(timezone), '/etc/localtime'
-        ], raise_err=True)
+        cmd = [
+            'ln', '-s', '/usr/share/zoneinfo/{0}'.format(timezone),
+            '/etc/localtime'
+        ]
+
+        # run sudo if not root
+        if uid != 0:
+            cmd = ['/usr/bin/sudo'] + cmd
+
+        out, err = popen_wrapper(cmd, raise_err=True)
 
         # stdout is not expected on success.
         if out and len(out) > 0:

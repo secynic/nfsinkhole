@@ -30,6 +30,7 @@ import os
 import subprocess
 
 log = logging.getLogger(__name__)
+uid = os.geteuid()  # Unix req; autodoc_mock_imports for Sphinx cross platform
 se_linux = SELinux()
 
 
@@ -93,21 +94,24 @@ class SyslogNG:
 
         log.info('Checking syslog-ng.conf for conf.d inclusion.')
 
-        out, err = popen_wrapper(
-            ['/usr/bin/sudo', 'grep',
-             '"@include \\"/etc/syslog-ng/conf.d/\\""',
-             '/etc/syslog-ng/syslog-ng.conf'
-             ]
-        )
+        cmd = ['grep', '"@include \\"/etc/syslog-ng/conf.d/\\""',
+               '/etc/syslog-ng/syslog-ng.conf']
+
+        # run sudo if not root
+        if uid != 0:
+            cmd = ['/usr/bin/sudo'] + cmd
+
+        out, err = popen_wrapper(cmd)
 
         if not out:
 
             log.info('conf.d inclusion not found in syslog-ng.conf, appending')
 
             subprocess.call(
-                ['sudo /bin/sh -c '
+                ['{0}/bin/sh -c '
                  '\'echo "@include \\"/etc/syslog-ng/conf.d/\\"" >> '
-                 '/etc/syslog-ng/syslog-ng.conf\''],
+                 '/etc/syslog-ng/syslog-ng.conf\''.format(
+                    '/usr/bin/sudo ' if uid != 0 else '')],
                 shell=True
             )
 
@@ -118,7 +122,13 @@ class SyslogNG:
 
             log.info('/etc/syslog-ng/conf.d not found, creating directory')
 
-            popen_wrapper(['/usr/bin/sudo', 'mkdir', '/etc/syslog-ng/conf.d'])
+            cmd = ['mkdir', '/etc/syslog-ng/conf.d']
+
+            # run sudo if not root
+            if uid != 0:
+                cmd = ['/usr/bin/sudo'] + cmd
+
+            popen_wrapper(cmd)
 
     # TODO: syslog target options; currently, forwarding config is manual
     def create_config(self, prefix='[nfsinkhole] '):
@@ -148,13 +158,24 @@ class SyslogNG:
             )
 
         log.debug('Moving nfsinkhole.conf to /etc/syslog-ng/conf.d')
-        popen_wrapper(['/usr/bin/sudo', 'mv', 'nfsinkhole.conf',
-                       '/etc/syslog-ng/conf.d'])
+        cmd = ['mv', 'nfsinkhole.conf', '/etc/syslog-ng/conf.d']
+
+        # run sudo if not root
+        if uid != 0:
+            cmd = ['/usr/bin/sudo'] + cmd
+
+        popen_wrapper(cmd)
 
         log.debug('Setting root ownership for '
                   '/etc/syslog-ng/conf.d/nfsinkhole.conf')
-        popen_wrapper(['/usr/bin/sudo', 'chown', 'root:root',
-                       '/etc/syslog-ng/conf.d/nfsinkhole.conf'])
+
+        cmd = ['chown', 'root:root', '/etc/syslog-ng/conf.d/nfsinkhole.conf']
+
+        # run sudo if not root
+        if uid != 0:
+            cmd = ['/usr/bin/sudo'] + cmd
+
+        popen_wrapper(cmd)
 
     def delete_config(self):
         """
@@ -164,8 +185,14 @@ class SyslogNG:
         log.info('Deleting syslog-ng config')
 
         log.debug('Removing file: /etc/syslog-ng/conf.d/nfsinkhole.conf')
-        popen_wrapper(
-            ['/usr/bin/sudo', 'rm', '/etc/syslog-ng/conf.d/nfsinkhole.conf'])
+
+        cmd = ['rm', '/etc/syslog-ng/conf.d/nfsinkhole.conf']
+
+        # run sudo if not root
+        if uid != 0:
+            cmd = ['/usr/bin/sudo'] + cmd
+
+        popen_wrapper(cmd)
 
     def restart(self):
         """
@@ -177,11 +204,23 @@ class SyslogNG:
         if self.is_systemd:
 
             log.debug('Restarting systemd syslog-ng service (via systemctl)')
-            popen_wrapper(['/usr/bin/sudo', 'systemctl', 'restart',
-                           'syslog-ng.service'])
+
+            cmd = ['systemctl', 'restart', 'syslog-ng.service']
+
+            # run sudo if not root
+            if uid != 0:
+                cmd = ['/usr/bin/sudo'] + cmd
+
+            popen_wrapper(cmd)
 
         else:
 
             log.debug('Restarting init.d syslog-ng service (via service)')
-            popen_wrapper(
-                ['/usr/bin/sudo', 'service', 'syslog-ng', 'restart'])
+
+            cmd = ['service', 'syslog-ng', 'restart']
+
+            # run sudo if not root
+            if uid != 0:
+                cmd = ['/usr/bin/sudo'] + cmd
+
+            popen_wrapper(cmd)

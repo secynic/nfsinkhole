@@ -30,6 +30,7 @@ import subprocess
 import sys
 
 log = logging.getLogger(__name__)
+uid = os.geteuid()  # Unix req; autodoc_mock_imports for Sphinx cross platform
 
 # systemd service template
 SYSTEMD_SERVICE_TEMPLATE = (
@@ -257,17 +258,30 @@ class SystemService:
         # Write the temporary service file to svc_path
         # (/etc/init.d/nfsinkhole or /etc/systemd/system/nfsinkhole.service)
         subprocess.call(
-            ['sudo /bin/sh -c \'cat nfsinkhole.service > '
-             '{0}\''.format(self.svc_path)],
+            ['{0}/bin/sh -c \'cat nfsinkhole.service > '
+             '{1}\''.format('/usr/bin/sudo ' if uid != 0 else '',
+                            self.svc_path)],
             shell=True
         )
 
         # Set execute permission on svc_path
         # (/etc/init.d/nfsinkhole or /etc/systemd/system/nfsinkhole.service)
-        popen_wrapper(['/usr/bin/sudo', 'chmod', '+x', self.svc_path])
+        cmd = ['chmod', '+x', self.svc_path]
+
+        # run sudo if not root
+        if uid != 0:
+            cmd = ['/usr/bin/sudo'] + cmd
+
+        popen_wrapper(cmd)
 
         # Delete the temporary service file
-        popen_wrapper(['/usr/bin/sudo', 'rm', 'nfsinkhole.service'])
+        cmd = ['rm', 'nfsinkhole.service']
+
+        # run sudo if not root
+        if uid != 0:
+            cmd = ['/usr/bin/sudo'] + cmd
+
+        popen_wrapper(cmd)
 
     def delete_service(self):
         """
@@ -276,4 +290,10 @@ class SystemService:
 
         log.info('Deleting nfsinkhole service')
 
-        popen_wrapper(['/usr/bin/sudo', 'rm', self.svc_path])
+        cmd = ['rm', self.svc_path]
+
+        # run sudo if not root
+        if uid != 0:
+            cmd = ['/usr/bin/sudo'] + cmd
+
+        popen_wrapper(cmd)
