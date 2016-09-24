@@ -75,14 +75,18 @@ def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True):
 
     # Create a subprocess for the command, piping stdout, with stderr to
     # stdout for logging.
-    proc = subprocess.Popen(
-        cmd_arr,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT
-    )
+    try:
+        proc = subprocess.Popen(
+            cmd_arr,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT
+        )
 
-    # Command is done, get the stdout.
-    out, err = proc.communicate()
+        # Command is done, get the stdout.
+        out, err = proc.communicate()
+    except OSError as e:
+        out = None
+        err = 'subprocess OSError: {0}'.format(e)
 
     # Each stdout line is a log entry.
     if log_stdout_line:
