@@ -11,12 +11,14 @@ services:
 before_install:
   - sudo docker pull centos:7
 install:
-  - docker ps
   - if [[ $TRAVIS_PYTHON_VERSION == 2.6* ]]; then pip install -r requirements/python2.6.txt; fi
   - pip install coveralls
   - python setup.py -q install
 script:
   - nosetests -v -w nfsinkhole --include=docker --with-coverage --cover-package=nfsinkhole
-  - docker run centos:7 /bin/sh -c "ls -al"
+  - sudo docker run --name nfsinkholevm centos:7 /bin/sh -c "whoami"
+  - sudo docker ps
+  - sudo docker cp $TRAVIS_BUILD_DIR nfsinkholevm:/root/nfsinkhole
+  - sudo docker run --name nfsinkholevm centos:7 /bin/sh -c "ls -al /root/nfsinkhole"
 after_success:
   - coveralls --rcfile=.coveragerc
