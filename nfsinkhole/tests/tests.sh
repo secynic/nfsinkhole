@@ -7,7 +7,7 @@ sudo docker run -d -e "container=docker" -v /sys/fs/cgroup:/sys/fs/cgroup --priv
 sudo docker network connect sinknet nfsinkholevm
 sudo docker ps -a | grep nfsinkholevm
 sudo docker network ls
-sudo docker cp "${TRAVIS_PULL_REQUEST}" nfsinkholevm:/root/nfsinkhole
+sudo docker cp $TRAVIS_BUILD_DIR nfsinkholevm:/root/nfsinkhole
 sudo docker exec nfsinkholevm /bin/sh -c "yum -y install net-tools"
 sudo docker exec nfsinkholevm /bin/sh -c "yum -y install iptables"
 sudo docker exec nfsinkholevm /bin/sh -c "yum -y install tcpdump"
