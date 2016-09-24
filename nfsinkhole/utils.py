@@ -188,13 +188,17 @@ def get_interface_addr(interface=None):
     try:
 
         # TODO: is this faster than ifconfig/ip route parsing?
-        return socket.inet_ntoa(
+        addr = socket.inet_ntoa(
             fcntl.ioctl(
                 s.fileno(),
                 0x8915,
                 struct.pack('256s', interface[:15])
             )[20:24]
         )
+
+        log.info('Address found for interface {0}: {1}'
+                 ''.format(interface, addr))
+        return addr
 
     except IOError:
 
