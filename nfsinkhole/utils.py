@@ -237,16 +237,22 @@ def set_system_timezone(timezone='UTC'):
         out, err = popen_wrapper(cmd, raise_err=True, sudo=True)
 
         # stdout is not expected on success.
-        if out and len(out) > 0:
-            raise SubprocessError(out)
+        if (out or err) and (len(out) > 0 or len(err) > 0):
+            raise SubprocessError('{0}{1}'.format(
+                '{0}\n'.format(out) if out else '',
+                '{0}\n'.format(err) if err else ''
+            ))
 
         # Remove /etc/localtime
         cmd = ['rm', '/etc/localtime']
         out, err = popen_wrapper(cmd, raise_err=True, sudo=True)
 
         # stdout is not expected on success.
-        if out and len(out) > 0:
-            raise SubprocessError(out)
+        if (out or err) and (len(out) > 0 or len(err) > 0):
+            raise SubprocessError('{0}{1}'.format(
+                '{0}\n'.format(out) if out else '',
+                '{0}\n'.format(err) if err else ''
+            ))
 
         # Create symbolic link to /usr/share/zoneinfo/{timezone} for
         # /etc/localtime
@@ -257,5 +263,8 @@ def set_system_timezone(timezone='UTC'):
         out, err = popen_wrapper(cmd, raise_err=True, sudo=True)
 
         # stdout is not expected on success.
-        if out and len(out) > 0:
-            raise SubprocessError(out)
+        if (out or err) and (len(out) > 0 or len(err) > 0):
+            raise SubprocessError('{0}{1}'.format(
+                '{0}\n'.format(out) if out else '',
+                '{0}\n'.format(err) if err else ''
+            ))
