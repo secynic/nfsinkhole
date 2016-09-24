@@ -9,9 +9,9 @@ python:
 services:
   - docker
 before_install:
-  - sudo docker pull centos/centos7
+  - sudo docker pull centos:7
 script:
-  - docker run centos/centos7 /bin/sh -c "ls -al"
+  - docker run centos:7 /bin/sh -c "ls -al"
 install:
   - if [[ $TRAVIS_PYTHON_VERSION == 2.6* ]]; then pip install -r requirements/python2.6.txt; fi
   - pip install coveralls
