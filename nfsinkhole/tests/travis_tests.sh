@@ -5,6 +5,7 @@ set -eo xtrace
 nosetests -v -w nfsinkhole --include=docker --with-coverage --cover-package=nfsinkhole
 
 if [ "${TRAVIS_PYTHON_VERSION}" = "2.7" ]; then
+    sudo docker pull centos:7
     sudo docker network create --driver=bridge sinknet --subnet=172.19.0.0/24
     sudo docker run -d -e "container=docker" -v /sys/fs/cgroup:/sys/fs/cgroup --privileged --name nfsinkholevm -t centos:7 /usr/sbin/init
     sudo docker network connect sinknet nfsinkholevm
