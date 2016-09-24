@@ -30,7 +30,6 @@ import os
 import re
 
 log = logging.getLogger(__name__)
-uid = os.geteuid()  # Unix req; autodoc_mock_imports for Sphinx cross platform
 se_linux = SELinux()
 
 
@@ -116,23 +115,13 @@ class RSyslog:
         log.debug('Moving nfsinkhole.conf to /etc/rsyslog.d')
 
         cmd = ['mv', 'nfsinkhole.conf', '/etc/rsyslog.d']
-
-        # run sudo if not root
-        if uid != 0:
-            cmd = ['/usr/bin/sudo'] + cmd
-
-        popen_wrapper(cmd)
+        popen_wrapper(cmd, sudo=True)
 
         log.debug('Setting root ownership for '
                   '/etc/rsyslog.d/nfsinkhole.conf')
 
         cmd = ['chown', 'root:root', '/etc/rsyslog.d/nfsinkhole.conf']
-
-        # run sudo if not root
-        if uid != 0:
-            cmd = ['/usr/bin/sudo'] + cmd
-
-        popen_wrapper(cmd)
+        popen_wrapper(cmd, sudo=True)
 
     def delete_config(self):
         """
@@ -144,12 +133,7 @@ class RSyslog:
         log.debug('Removing file: /etc/rsyslog.d/nfsinkhole.conf')
 
         cmd = ['rm', '/etc/rsyslog.d/nfsinkhole.conf']
-
-        # run sudo if not root
-        if uid != 0:
-            cmd = ['/usr/bin/sudo'] + cmd
-
-        popen_wrapper(cmd)
+        popen_wrapper(cmd, sudo=True)
 
     def restart(self):
         """
@@ -163,21 +147,11 @@ class RSyslog:
             log.debug('Restarting systemd rsyslog service (via systemctl)')
 
             cmd = ['systemctl', 'restart', 'rsyslog.service']
-
-            # run sudo if not root
-            if uid != 0:
-                cmd = ['/usr/bin/sudo'] + cmd
-
-            popen_wrapper(cmd)
+            popen_wrapper(cmd, sudo=True)
 
         else:
 
             log.debug('Restarting init.d rsyslog service (via service)')
 
             cmd = ['service', 'rsyslog', 'restart']
-
-            # run sudo if not root
-            if uid != 0:
-                cmd = ['/usr/bin/sudo'] + cmd
-
-            popen_wrapper(cmd)
+            popen_wrapper(cmd, sudo=True)

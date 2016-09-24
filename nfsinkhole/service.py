@@ -267,21 +267,11 @@ class SystemService:
         # Set execute permission on svc_path
         # (/etc/init.d/nfsinkhole or /etc/systemd/system/nfsinkhole.service)
         cmd = ['chmod', '+x', self.svc_path]
-
-        # run sudo if not root
-        if uid != 0:
-            cmd = ['/usr/bin/sudo'] + cmd
-
-        popen_wrapper(cmd)
+        popen_wrapper(cmd, sudo=True)
 
         # Delete the temporary service file
         cmd = ['rm', 'nfsinkhole.service']
-
-        # run sudo if not root
-        if uid != 0:
-            cmd = ['/usr/bin/sudo'] + cmd
-
-        popen_wrapper(cmd)
+        popen_wrapper(cmd, sudo=True)
 
     def delete_service(self):
         """
@@ -291,9 +281,4 @@ class SystemService:
         log.info('Deleting nfsinkhole service')
 
         cmd = ['rm', self.svc_path]
-
-        # run sudo if not root
-        if uid != 0:
-            cmd = ['/usr/bin/sudo'] + cmd
-
-        popen_wrapper(cmd)
+        popen_wrapper(cmd, sudo=True)

@@ -26,10 +26,8 @@ from .exceptions import (IPTablesError, IPTablesExists, IPTablesNotExists,
                          SubprocessError)
 from .utils import popen_wrapper
 import logging
-import os
 
 log = logging.getLogger(__name__)
-uid = os.geteuid()
 
 
 class IPTablesSinkhole:
@@ -103,17 +101,12 @@ class IPTablesSinkhole:
         # Get list summary of iptables rules
         cmd = ['iptables', '-S']
 
-        # run sudo if not root
-        if uid != 0:
-
-            cmd = ['/usr/bin/sudo'] + cmd
-
         existing = []
 
         # Get all of the iptables rules
         try:
 
-            out, err = popen_wrapper(cmd)
+            out, err = popen_wrapper(cmd, sudo=True)
 
         except OSError as e:
 
@@ -160,13 +153,8 @@ class IPTablesSinkhole:
         # Create a new iptables chain for logging
         tmp_arr = ['iptables', '-N', 'SINKHOLE']
 
-        # run sudo if not root
-        if uid != 0:
-
-            tmp_arr = ['/usr/bin/sudo'] + tmp_arr
-
         log.info('Writing: {0}'.format(' '.join(tmp_arr)))
-        popen_wrapper(cmd_arr=tmp_arr, raise_err=True)
+        popen_wrapper(cmd_arr=tmp_arr, raise_err=True, sudo=True)
 
         # Exclude IPs/CIDRs from logging (scanners, monitoring, pen-testers,
         # etc):
@@ -179,13 +167,8 @@ class IPTablesSinkhole:
                 '-j', 'RETURN'
             ]
 
-            # run sudo if not root
-            if uid != 0:
-
-                tmp_arr = ['/usr/bin/sudo'] + tmp_arr
-
             log.info('Writing: {0}'.format(' '.join(tmp_arr)))
-            popen_wrapper(cmd_arr=tmp_arr, raise_err=True)
+            popen_wrapper(cmd_arr=tmp_arr, raise_err=True, sudo=True)
 
         # Tell the chain to log and use the prefix self.log_prefix:
         tmp_arr = [
@@ -195,25 +178,15 @@ class IPTablesSinkhole:
             '--log-prefix', self.log_prefix
         ]
 
-        # run sudo if not root
-        if uid != 0:
-
-            tmp_arr = ['/usr/bin/sudo'] + tmp_arr
-
         log.info('Writing: {0}'.format(' '.join(tmp_arr)))
-        popen_wrapper(cmd_arr=tmp_arr, raise_err=True)
+        popen_wrapper(cmd_arr=tmp_arr, raise_err=True, sudo=True)
 
         # Tell the chain to also log to netfilter (for packet capture):
         tmp_arr = ['iptables', '-A', 'SINKHOLE',
                    '-j', 'NFLOG']
 
-        # run sudo if not root
-        if uid != 0:
-
-            tmp_arr = ['/usr/bin/sudo'] + tmp_arr
-
         log.info('Writing: {0}'.format(' '.join(tmp_arr)))
-        popen_wrapper(cmd_arr=tmp_arr, raise_err=True)
+        popen_wrapper(cmd_arr=tmp_arr, raise_err=True, sudo=True)
 
         # Tell the chain to trigger on hashlimit and protocol/port settings
         tmp_arr = [
@@ -230,11 +203,6 @@ class IPTablesSinkhole:
             '-I', 'INPUT', '1'
         ]
 
-        # run sudo if not root
-        if uid != 0:
-
-            tmp_arr = ['/usr/bin/sudo'] + tmp_arr
-
         # if --protocol filtered, set mode to multiport with protocol, and
         # set destination port if provided and applicable to the protocol(s)
         if self.protocol != 'all':
@@ -245,7 +213,7 @@ class IPTablesSinkhole:
                 tmp_arr += ['--dport', self.dport]
 
         log.info('Writing: {0}'.format(' '.join(tmp_arr)))
-        popen_wrapper(cmd_arr=tmp_arr, raise_err=True)
+        popen_wrapper(cmd_arr=tmp_arr, raise_err=True, sudo=True)
 
     def create_drop_rule(self):
         """
@@ -279,13 +247,8 @@ class IPTablesSinkhole:
             '-I', 'INPUT', '1'
         ]
 
-        # run sudo if not root
-        if uid != 0:
-
-            tmp_arr = ['/usr/bin/sudo'] + tmp_arr
-
         log.info('Writing: {0}'.format(' '.join(tmp_arr)))
-        popen_wrapper(cmd_arr=tmp_arr, raise_err=True)
+        popen_wrapper(cmd_arr=tmp_arr, raise_err=True, sudo=True)
 
         tmp_arr = [
             'iptables',
@@ -294,17 +257,12 @@ class IPTablesSinkhole:
             '-I', 'OUTPUT', '1'
         ]
 
-        # run sudo if not root
-        if uid != 0:
-
-            tmp_arr = ['/usr/bin/sudo'] + tmp_arr
-
         log.info('Writing: {0}'.format(' '.join(tmp_arr)))
 
         # TODO: replicate exception handling to other subprocess calls
         try:
 
-            popen_wrapper(cmd_arr=tmp_arr, raise_err=True)
+            popen_wrapper(cmd_arr=tmp_arr, raise_err=True, sudo=True)
 
         except SubprocessError as e:
 
@@ -344,13 +302,8 @@ class IPTablesSinkhole:
                 stmt = line.replace('-A', '-D').strip().split(' ')
                 tmp_arr = ['iptables'] + stmt
 
-                # run sudo if not root
-                if uid != 0:
-
-                    tmp_arr = ['/usr/bin/sudo'] + tmp_arr
-
                 log.info('Deleting: {0}'.format(' '.join(tmp_arr)))
-                popen_wrapper(cmd_arr=tmp_arr, raise_err=True)
+                popen_wrapper(cmd_arr=tmp_arr, raise_err=True, sudo=True)
 
         # The SINKHOLE chain was detected. Remove it.
         if flush:
@@ -359,24 +312,14 @@ class IPTablesSinkhole:
             # but run a flush to be sure.
             tmp_arr = ['iptables', '-F', 'SINKHOLE']
 
-            # run sudo if not root
-            if uid != 0:
-
-                tmp_arr = ['/usr/bin/sudo'] + tmp_arr
-
             log.info('Flushing: {0}'.format(' '.join(tmp_arr)))
-            popen_wrapper(cmd_arr=tmp_arr, raise_err=True)
+            popen_wrapper(cmd_arr=tmp_arr, raise_err=True, sudo=True)
 
             # Now that the SINKHOLE chain has been flushed, we can delete it.
             tmp_arr = ['iptables', '-X', 'SINKHOLE']
 
-            # run sudo if not root
-            if uid != 0:
-
-                tmp_arr = ['/usr/bin/sudo'] + tmp_arr
-
             log.info('Deleting: {0}'.format(' '.join(tmp_arr)))
-            popen_wrapper(cmd_arr=tmp_arr, raise_err=True)
+            popen_wrapper(cmd_arr=tmp_arr, raise_err=True, sudo=True)
 
         # Return a list of matching lines.
         return len(existing)
@@ -408,13 +351,8 @@ class IPTablesSinkhole:
                 stmt = line.replace('-A', '-D').split(' ')
                 tmp_arr = ['iptables'] + stmt
 
-                # run sudo if not root
-                if uid != 0:
-
-                    tmp_arr = ['/usr/bin/sudo'] + tmp_arr
-
                 log.info('Deleting: {0}'.format(' '.join(tmp_arr)))
-                popen_wrapper(cmd_arr=tmp_arr, raise_err=True)
+                popen_wrapper(cmd_arr=tmp_arr, raise_err=True, sudo=True)
 
         # Return the number of matching lines.
         return count

@@ -96,12 +96,7 @@ class SyslogNG:
 
         cmd = ['grep', '"@include \\"/etc/syslog-ng/conf.d/\\""',
                '/etc/syslog-ng/syslog-ng.conf']
-
-        # run sudo if not root
-        if uid != 0:
-            cmd = ['/usr/bin/sudo'] + cmd
-
-        out, err = popen_wrapper(cmd)
+        out, err = popen_wrapper(cmd, sudo=True)
 
         if not out:
 
@@ -123,12 +118,7 @@ class SyslogNG:
             log.info('/etc/syslog-ng/conf.d not found, creating directory')
 
             cmd = ['mkdir', '/etc/syslog-ng/conf.d']
-
-            # run sudo if not root
-            if uid != 0:
-                cmd = ['/usr/bin/sudo'] + cmd
-
-            popen_wrapper(cmd)
+            popen_wrapper(cmd, sudo=True)
 
     # TODO: syslog target options; currently, forwarding config is manual
     def create_config(self, prefix='[nfsinkhole] '):
@@ -159,23 +149,13 @@ class SyslogNG:
 
         log.debug('Moving nfsinkhole.conf to /etc/syslog-ng/conf.d')
         cmd = ['mv', 'nfsinkhole.conf', '/etc/syslog-ng/conf.d']
-
-        # run sudo if not root
-        if uid != 0:
-            cmd = ['/usr/bin/sudo'] + cmd
-
-        popen_wrapper(cmd)
+        popen_wrapper(cmd, sudo=True)
 
         log.debug('Setting root ownership for '
                   '/etc/syslog-ng/conf.d/nfsinkhole.conf')
 
         cmd = ['chown', 'root:root', '/etc/syslog-ng/conf.d/nfsinkhole.conf']
-
-        # run sudo if not root
-        if uid != 0:
-            cmd = ['/usr/bin/sudo'] + cmd
-
-        popen_wrapper(cmd)
+        popen_wrapper(cmd, sudo=True)
 
     def delete_config(self):
         """
@@ -187,12 +167,7 @@ class SyslogNG:
         log.debug('Removing file: /etc/syslog-ng/conf.d/nfsinkhole.conf')
 
         cmd = ['rm', '/etc/syslog-ng/conf.d/nfsinkhole.conf']
-
-        # run sudo if not root
-        if uid != 0:
-            cmd = ['/usr/bin/sudo'] + cmd
-
-        popen_wrapper(cmd)
+        popen_wrapper(cmd, sudo=True)
 
     def restart(self):
         """
@@ -206,21 +181,11 @@ class SyslogNG:
             log.debug('Restarting systemd syslog-ng service (via systemctl)')
 
             cmd = ['systemctl', 'restart', 'syslog-ng.service']
-
-            # run sudo if not root
-            if uid != 0:
-                cmd = ['/usr/bin/sudo'] + cmd
-
-            popen_wrapper(cmd)
+            popen_wrapper(cmd, sudo=True)
 
         else:
 
             log.debug('Restarting init.d syslog-ng service (via service)')
 
             cmd = ['service', 'syslog-ng', 'restart']
-
-            # run sudo if not root
-            if uid != 0:
-                cmd = ['/usr/bin/sudo'] + cmd
-
-            popen_wrapper(cmd)
+            popen_wrapper(cmd, sudo=True)

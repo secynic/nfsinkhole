@@ -45,7 +45,8 @@ ANSI = {
 }
 
 
-def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True):
+def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True,
+                  sudo=False):
     """
     The function for subprocess with custom logging output.
 
@@ -54,6 +55,8 @@ def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True):
         raise_err: If stderr is encountered, raise SubprocessError.
         log_stdout_line: If True, logs each stdout line as a separate log
             entry. If False, logs all of stdout in a single log entry.
+        sudo: If True, prepends /usr/bin/sudo to cmd_arr. If False, cmd_arr
+            is run as-is.
 
     Returns:
         Tuple: stdout, stderr of the completed subprocess.
@@ -72,6 +75,10 @@ def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True):
 
     if not isinstance(cmd_arr, list):
         raise TypeError('cmd_arr must be a list of commands')
+
+    # If sudo, run /usr/bin/sudo if not root
+    if sudo and uid != 0:
+        cmd_arr = ['/usr/bin/sudo'] + cmd_arr
 
     # Create a subprocess for the command, piping stdout, with stderr to
     # stdout for logging.
@@ -212,12 +219,7 @@ def set_system_timezone(timezone='UTC'):
 
     # Try setting the timzone with timedatectl
     cmd = ['timedatectl', 'set-timezone', timezone]
-
-    # run sudo if not root
-    if uid != 0:
-        cmd = ['/usr/bin/sudo'] + cmd
-
-    out, err = popen_wrapper(cmd)
+    out, err = popen_wrapper(cmd, sudo=True)
 
     if out or err:
 
@@ -227,12 +229,7 @@ def set_system_timezone(timezone='UTC'):
 
         # Backup localtime to /root/localtime.old
         cmd = ['cp', '/etc/localtime', '/root/localtime.old']
-
-        # run sudo if not root
-        if uid != 0:
-            cmd = ['/usr/bin/sudo'] + cmd
-
-        out, err = popen_wrapper(cmd, raise_err=True)
+        out, err = popen_wrapper(cmd, raise_err=True, sudo=True)
 
         # stdout is not expected on success.
         if out and len(out) > 0:
@@ -240,12 +237,7 @@ def set_system_timezone(timezone='UTC'):
 
         # Remove /etc/localtime
         cmd = ['rm', '/etc/localtime']
-
-        # run sudo if not root
-        if uid != 0:
-            cmd = ['/usr/bin/sudo'] + cmd
-
-        out, err = popen_wrapper(cmd, raise_err=True)
+        out, err = popen_wrapper(cmd, raise_err=True, sudo=True)
 
         # stdout is not expected on success.
         if out and len(out) > 0:
@@ -257,12 +249,7 @@ def set_system_timezone(timezone='UTC'):
             'ln', '-s', '/usr/share/zoneinfo/{0}'.format(timezone),
             '/etc/localtime'
         ]
-
-        # run sudo if not root
-        if uid != 0:
-            cmd = ['/usr/bin/sudo'] + cmd
-
-        out, err = popen_wrapper(cmd, raise_err=True)
+        out, err = popen_wrapper(cmd, raise_err=True, sudo=True)
 
         # stdout is not expected on success.
         if out and len(out) > 0:

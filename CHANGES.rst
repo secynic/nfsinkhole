@@ -5,6 +5,7 @@ Changelog
 -----------
 
 - Added syslog-ng support (#2)
+- Added sudo arg to utils.popen_wrapper() - code consolidation
 - Fixed splitlines list[bytes] decode on Python 3
 - Logging output tweaks
 - Fixed redundant TCPDump.check_packet_print() in nfsinkhole-setup.py

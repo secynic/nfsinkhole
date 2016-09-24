@@ -27,7 +27,6 @@ import logging
 import os
 
 log = logging.getLogger(__name__)
-uid = os.geteuid()  # Unix req; autodoc_mock_imports for Sphinx cross platform
 
 
 class AppArmor:
@@ -62,22 +61,12 @@ class AppArmor:
                 '/etc/apparmor.d/{0}'.format(module),
                 '/etc/apparmor.d/disable/'
             ]
-
-            # run sudo if not root
-            if uid != 0:
-                cmd = ['/usr/bin/sudo'] + cmd
-
-            popen_wrapper(cmd)
+            popen_wrapper(cmd, sudo=True)
 
             log.debug('Restarting AppArmor service')
 
             cmd = ['/etc/init.d/apparmor', 'restart']
-
-            # run sudo if not root
-            if uid != 0:
-                cmd = ['/usr/bin/sudo'] + cmd
-
-            popen_wrapper(cmd)
+            popen_wrapper(cmd, sudo=True)
 
             return True
 
@@ -105,22 +94,12 @@ class AppArmor:
             log.debug('AppArmor found; enabling enforcement.')
 
             cmd = ['rm', '/etc/apparmor.d/disable/{0}'.format(module)]
-
-            # run sudo if not root
-            if uid != 0:
-                cmd = ['/usr/bin/sudo'] + cmd
-
-            popen_wrapper(cmd)
+            popen_wrapper(cmd, sudo=True)
 
             log.debug('Restarting AppArmor service')
 
             cmd = ['/etc/init.d/apparmor', 'restart']
-
-            # run sudo if not root
-            if uid != 0:
-                cmd = ['/usr/bin/sudo'] + cmd
-
-            popen_wrapper(cmd)
+            popen_wrapper(cmd, sudo=True)
 
             return True
 
