@@ -17,11 +17,12 @@ install:
 script:
   - nosetests -v -w nfsinkhole --include=docker --with-coverage --cover-package=nfsinkhole
   - sudo docker run -d --name nfsinkholevm -t centos:7 bash
-  - docker ps -a | grep nfsinkholevm
+  - sudo docker ps -a | grep nfsinkholevm
+  - sudo docket network ls
   - sudo docker cp $TRAVIS_BUILD_DIR nfsinkholevm:/root/nfsinkhole
-  - sudo docker exec nfsinkholevm /bin/sh -c "ip route show"
+  - sudo docker exec nfsinkholevm /bin/sh -c "ifconfig"
   - sudo docker exec nfsinkholevm /bin/sh -c "ls -al /root/nfsinkhole"
   - sudo docker exec nfsinkholevm /bin/sh -c "ls -al /root/nfsinkhole/build"
-  - sudo docker exec nfsinkholevm /bin/sh -c "python setup.py -q install"
+  - sudo docker exec nfsinkholevm /bin/sh -c "cd /root/nfsinkhole/ && python setup.py -q install"
 after_success:
   - coveralls --rcfile=.coveragerc
