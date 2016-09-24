@@ -62,7 +62,8 @@ class RSyslog:
 
         log.info('Checking rsyslog version.')
 
-        out, err = popen_wrapper(['rsyslogd', '-version'])
+        out, err = popen_wrapper(['rsyslogd', '-version'],
+                                 log_stdout_line=False)
 
         rsyslog_version = None
         if out and len(out) > 0:
@@ -167,7 +168,7 @@ class RSyslog:
             if uid != 0:
                 cmd = ['/usr/bin/sudo'] + cmd
 
-            popen_wrapper(cmd, log_stdout_line=False)
+            popen_wrapper(cmd)
 
         else:
 
