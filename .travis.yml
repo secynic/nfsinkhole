@@ -17,9 +17,8 @@ install:
 script:
   - nosetests -v -w nfsinkhole --include=docker --with-coverage --cover-package=nfsinkhole
   - sudo docker run -d --name nfsinkholevm -t centos:7 bash
-  - sudo docker exec -d nfsinkholevm /bin/sh -c "touch /tmp/nfsinkholevm"
   - docker ps -a | grep nfsinkholevm
   - sudo docker cp $TRAVIS_BUILD_DIR nfsinkholevm:/root/nfsinkhole
-  - sudo docker exec -d nfsinkholevm /bin/sh -c "ls -al /root/nfsinkhole"
+  - sudo docker exec nfsinkholevm /bin/sh -c "ls -al /root/nfsinkhole"
 after_success:
   - coveralls --rcfile=.coveragerc
