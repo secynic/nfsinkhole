@@ -115,6 +115,7 @@ def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True,
     # Iterate subprocess stderr, and write to the error log.
     err_arr = err.splitlines(True) if err else []
     for line in err_arr:
+
         log.error('[{0}] {1}'.format(
             ' '.join(cmd_arr),
             line.replace(b'\n', b'').decode('ascii', 'ignore')
