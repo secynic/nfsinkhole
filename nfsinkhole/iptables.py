@@ -228,15 +228,15 @@ class IPTablesSinkhole:
         if len(existing) > 0:
 
             for line in existing:
-                tmp_line = line.decode('ascii', 'ignore')
-                if tmp_line in (
+
+                if line in (
                     '-A INPUT -i {0} -j DROP'.format(self.interface),
                     '-A OUTPUT -o {0} -j DROP'.format(self.interface)
                 ):
 
                     raise IPTablesExists('Existing iptables DROP rules found '
                                          'for nfsinkhole:\n{0}'
-                                         ''.format(tmp_line))
+                                         ''.format(line))
 
         log.info('Writing iptables DROP config')
 
@@ -287,8 +287,8 @@ class IPTablesSinkhole:
         # Iterate all of the active sinkhole related iptables lines
         flush = False
         for line in existing:
-            tmp_line = line.decode('ascii', 'ignore')
-            if '-A SINKHOLE' in tmp_line or tmp_line == '-N SINKHOLE':
+
+            if '-A SINKHOLE' in line or line == '-N SINKHOLE':
 
                 # Don't try to delete the SINKHOLE chain yet, it needs to be
                 # empty. Set flush to clear it after this loop.
@@ -300,7 +300,7 @@ class IPTablesSinkhole:
             ):
 
                 # Delete a single line (not the SINKHOLE chain itself).
-                stmt = tmp_line.replace('-A', '-D').strip().split(' ')
+                stmt = line.replace('-A', '-D').strip().split(' ')
                 tmp_arr = ['iptables'] + stmt
 
                 log.info('Deleting: {0}'.format(' '.join(tmp_arr)))
@@ -343,14 +343,13 @@ class IPTablesSinkhole:
         count = 0
         for line in existing:
 
-            tmp_line = line.decode('ascii', 'ignore')
-            if tmp_line in (
+            if line in (
                     '-A INPUT -i {0} -j DROP'.format(self.interface),
                     '-A OUTPUT -o {0} -j DROP'.format(self.interface)
             ):
                 count += 1
                 # Delete a single line (not the SINKHOLE chain itself).
-                stmt = tmp_line.replace('-A', '-D').split(' ')
+                stmt = line.replace('-A', '-D').split(' ')
                 tmp_arr = ['iptables'] + stmt
 
                 log.info('Deleting: {0}'.format(' '.join(tmp_arr)))
