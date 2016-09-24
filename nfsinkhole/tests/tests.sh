@@ -1,4 +1,5 @@
 #!/bin/bash
+export PS4='\033[1m+(${BASH_SOURCE}:${LINENO}): ${FUNCNAME[0]:+${FUNCNAME[0]}(): }\033[0m'
 set -eo xtrace
 
 nosetests -v -w nfsinkhole --include=docker --with-coverage --cover-package=nfsinkhole
