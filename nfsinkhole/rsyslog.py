@@ -167,7 +167,7 @@ class RSyslog:
             if uid != 0:
                 cmd = ['/usr/bin/sudo'] + cmd
 
-            popen_wrapper(cmd)
+            popen_wrapper(cmd, log_stdout_line=False)
 
         else:
 

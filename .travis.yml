@@ -26,7 +26,6 @@ script:
   - sudo docker exec nfsinkholevm /bin/sh -c "yum -y install iptables"
   - sudo docker exec nfsinkholevm /bin/sh -c "yum -y install tcpdump"
   - sudo docker exec nfsinkholevm /bin/sh -c "yum -y install rsyslog"
-  - sudo docker exec --privileged nfsinkholevm /bin/sh -c "systemctl start rsyslog.service"
   - sudo docker exec nfsinkholevm /bin/sh -c "ifconfig"
   - sudo docker exec nfsinkholevm /bin/sh -c "ls -al /root/nfsinkhole"
   - sudo docker exec nfsinkholevm /bin/sh -c "cd /root/nfsinkhole/ && python setup.py install"

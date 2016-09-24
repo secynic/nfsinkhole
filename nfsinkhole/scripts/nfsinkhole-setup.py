@@ -170,10 +170,6 @@ group.add_argument(
 # Get the args
 script_args = parser.parse_args()
 
-# Check if packet printing is supported
-tcp_dump = TCPDump()
-packet_print = tcp_dump.check_packet_print()
-
 # Check if systemd or legacy
 system_service = SystemService(
     interface=script_args.interface,

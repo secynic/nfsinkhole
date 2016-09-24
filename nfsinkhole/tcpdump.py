@@ -72,7 +72,7 @@ class TCPDump:
 
         log.info('Checking tcpdump version.')
 
-        out, err = popen_wrapper([self.sbin, '-w'])
+        out, err = popen_wrapper([self.sbin, '-w'], log_stdout_line=False)
 
         tcpdump_version = None
         if out and len(out) > 0:
