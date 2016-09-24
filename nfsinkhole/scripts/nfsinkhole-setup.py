@@ -44,6 +44,7 @@ logging.basicConfig(filename='nfsinkhole-setup.log', format=LOG_FORMAT,
                     level=logging.DEBUG, datefmt='%Y-%m-%dT%H:%M:%S')
 logging.Formatter.converter = time.gmtime
 log = logging.getLogger(__name__)
+uid = os.geteuid()  # Unix req; autodoc_mock_imports for Sphinx cross platform
 
 scripts_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -326,8 +327,9 @@ if script_args.install:
 
 # Append the temporary setup log to /var/log/nfsinkhole-setup.log
 subprocess.call(
-    ['sudo /bin/sh -c \'cat nfsinkhole-setup.log >> '
-     '/var/log/nfsinkhole-setup.log\''],
+    ['{0}/bin/sh -c \'cat nfsinkhole-setup.log >> '
+     '/var/log/nfsinkhole-setup.log\''.format(
+        '/usr/bin/sudo ' if uid != 0 else '')],
     shell=True
 )
 
