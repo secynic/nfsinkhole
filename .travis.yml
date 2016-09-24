@@ -16,9 +16,10 @@ install:
   - python setup.py -q install
 script:
   - nosetests -v -w nfsinkhole --include=docker --with-coverage --cover-package=nfsinkhole
-  - sudo docker run --name nfsinkholevm centos:7 /bin/sh -c "whoami"
-  - sudo docker ps
+  - sudo docker run --name nfsinkholevm -it centos:7 bash
+  - sudo docker exec -d nfsinkholevm touch /tmp/nfsinkholevm
+  - docker ps -a | grep nfsinkholevm
   - sudo docker cp $TRAVIS_BUILD_DIR nfsinkholevm:/root/nfsinkhole
-  - sudo docker run --name nfsinkholevm centos:7 /bin/sh -c "ls -al /root/nfsinkhole"
+  - sudo docker exec -d nfsinkholevm /bin/sh -c "ls -al /root/nfsinkhole"
 after_success:
   - coveralls --rcfile=.coveragerc
