@@ -10,7 +10,7 @@ if [ "${TRAVIS_PYTHON_VERSION}" = "2.7" ]; then
     sudo docker network connect sinknet nfsinkholevm
     sudo docker ps -a | grep nfsinkholevm
     sudo docker network ls
-    sudo docker cp $TRAVIS_BUILD_DIR nfsinkholevm:/root/nfsinkhole
+    sudo docker cp ${TRAVIS_BUILD_DIR} nfsinkholevm:/root/nfsinkhole
     sudo docker exec nfsinkholevm /bin/sh -c "yum -y install net-tools"
     sudo docker exec nfsinkholevm /bin/sh -c "yum -y install iptables"
     sudo docker exec nfsinkholevm /bin/sh -c "yum -y install tcpdump"
