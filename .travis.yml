@@ -16,10 +16,9 @@ install:
   - python setup.py -q install
 script:
   - nosetests -v -w nfsinkhole --include=docker --with-coverage --cover-package=nfsinkhole
-  - sudo docker network create --driver=bridge net1 --subnet=172.17.0.0/24
-  - sudo docker network create --driver=bridge net2 --subnet=172.17.1.0/24
-  - sudo docker run -d --name nfsinkholevm --network net1 -t centos:7 bash
-  - sudo docker network connect net2 nfsinkholevm
+  - sudo docker network create --driver=bridge sinknet --subnet=172.19.0.0/24
+  - sudo docker run -d --name nfsinkholevm -t centos:7 bash
+  - sudo docker network connect sinknet nfsinkholevm
   - sudo docker ps -a | grep nfsinkholevm
   - sudo docker network ls
   - sudo docker cp $TRAVIS_BUILD_DIR nfsinkholevm:/root/nfsinkhole
