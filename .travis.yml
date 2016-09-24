@@ -26,6 +26,8 @@ script:
   - sudo docker exec nfsinkholevm /bin/sh -c "ifconfig"
   - sudo docker exec nfsinkholevm /bin/sh -c "ls -al /root/nfsinkhole"
   - sudo docker exec nfsinkholevm /bin/sh -c "cd /root/nfsinkhole/ && python setup.py install"
+  - sudo docker exec nfsinkholevm /bin/sh -c "python /usr/bin/nfsinkhole-setup.py --interface eth1 --install --pcap"
+  - sudo docker exec nfsinkholevm /bin/sh -c "sudo cat /var/log/nfsinkhole-setup.log"
 
 after_success:
   - coveralls --rcfile=.coveragerc
