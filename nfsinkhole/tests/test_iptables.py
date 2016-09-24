@@ -31,6 +31,7 @@ class TestIPTablesSinkhole(TestCommon):
         # Exists
         self.assertRaises(IPTablesExists, myobj.create_drop_rule)
 
+    # TODO: move to test_utils.py
     def test_timezone(self):
 
         set_system_timezone('UTC')
