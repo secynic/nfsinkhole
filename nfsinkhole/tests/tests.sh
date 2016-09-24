@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ev
+set -eo xtrace
 
 nosetests -v -w nfsinkhole --include=docker --with-coverage --cover-package=nfsinkhole
 
