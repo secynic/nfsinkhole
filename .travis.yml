@@ -23,8 +23,9 @@ script:
   - sudo docker network ls
   - sudo docker cp $TRAVIS_BUILD_DIR nfsinkholevm:/root/nfsinkhole
   - sudo docker exec nfsinkholevm /bin/sh -c "yum -y install net-tools"
-  - sudo docker exec nfsinkholevm /bin/sh -c "yum -y install tcpdump"
   - sudo docker exec nfsinkholevm /bin/sh -c "yum -y install iptables"
+  - sudo docker exec nfsinkholevm /bin/sh -c "yum -y install tcpdump"
+  - sudo docker exec nfsinkholevm /bin/sh -c "yum -y install rsyslog"
   - sudo docker exec nfsinkholevm /bin/sh -c "ifconfig"
   - sudo docker exec nfsinkholevm /bin/sh -c "ls -al /root/nfsinkhole"
   - sudo docker exec nfsinkholevm /bin/sh -c "cd /root/nfsinkhole/ && python setup.py install"
