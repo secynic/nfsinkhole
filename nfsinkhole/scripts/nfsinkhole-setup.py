@@ -34,7 +34,6 @@ from nfsinkhole.iptables import IPTablesSinkhole
 from nfsinkhole.rsyslog import RSyslog
 from nfsinkhole.service import SystemService
 from nfsinkhole.syslog_ng import SyslogNG
-from nfsinkhole.tcpdump import TCPDump
 from nfsinkhole.utils import (ANSI, popen_wrapper, set_system_timezone)
 
 # TODO: add --log_level arg, currently set to debug
@@ -44,6 +43,8 @@ logging.basicConfig(filename='nfsinkhole-setup.log', format=LOG_FORMAT,
                     level=logging.DEBUG, datefmt='%Y-%m-%dT%H:%M:%S')
 logging.Formatter.converter = time.gmtime
 log = logging.getLogger(__name__)
+log.debug('nfsinkhole-setup.py called')
+uid = os.geteuid()  # Unix req; autodoc_mock_imports for Sphinx cross platform
 
 scripts_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -168,10 +169,6 @@ group.add_argument(
 
 # Get the args
 script_args = parser.parse_args()
-
-# Check if packet printing is supported
-tcp_dump = TCPDump()
-packet_print = tcp_dump.check_packet_print()
 
 # Check if systemd or legacy
 system_service = SystemService(
@@ -326,8 +323,9 @@ if script_args.install:
 
 # Append the temporary setup log to /var/log/nfsinkhole-setup.log
 subprocess.call(
-    ['sudo /bin/sh -c \'cat nfsinkhole-setup.log >> '
-     '/var/log/nfsinkhole-setup.log\''],
+    ['{0}/bin/sh -c \'cat nfsinkhole-setup.log >> '
+     '/var/log/nfsinkhole-setup.log\''.format(
+        '/usr/bin/sudo ' if uid != 0 else '')],
     shell=True
 )
 

@@ -56,14 +56,17 @@ class AppArmor:
 
             log.debug('AppArmor found; disabling enforcement.')
 
-            popen_wrapper([
-                '/usr/bin/sudo', 'ln', '-s',
+            cmd = [
+                'ln', '-s',
                 '/etc/apparmor.d/{0}'.format(module),
                 '/etc/apparmor.d/disable/'
-            ])
+            ]
+            popen_wrapper(cmd, sudo=True)
 
             log.debug('Restarting AppArmor service')
-            popen_wrapper(['/usr/bin/sudo', '/etc/init.d/apparmor', 'restart'])
+
+            cmd = ['/etc/init.d/apparmor', 'restart']
+            popen_wrapper(cmd, sudo=True)
 
             return True
 
@@ -90,11 +93,13 @@ class AppArmor:
 
             log.debug('AppArmor found; enabling enforcement.')
 
-            popen_wrapper(['/usr/bin/sudo', 'rm',
-                           '/etc/apparmor.d/disable/{0}'.format(module)])
+            cmd = ['rm', '/etc/apparmor.d/disable/{0}'.format(module)]
+            popen_wrapper(cmd, sudo=True)
 
             log.debug('Restarting AppArmor service')
-            popen_wrapper(['/usr/bin/sudo', '/etc/init.d/apparmor', 'restart'])
+
+            cmd = ['/etc/init.d/apparmor', 'restart']
+            popen_wrapper(cmd, sudo=True)
 
             return True
 

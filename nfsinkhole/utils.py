@@ -45,7 +45,8 @@ ANSI = {
 }
 
 
-def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True):
+def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True,
+                  sudo=False):
     """
     The function for subprocess with custom logging output.
 
@@ -54,6 +55,8 @@ def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True):
         raise_err: If stderr is encountered, raise SubprocessError.
         log_stdout_line: If True, logs each stdout line as a separate log
             entry. If False, logs all of stdout in a single log entry.
+        sudo: If True, prepends /usr/bin/sudo to cmd_arr. If False, cmd_arr
+            is run as-is.
 
     Returns:
         Tuple: stdout, stderr of the completed subprocess.
@@ -73,16 +76,24 @@ def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True):
     if not isinstance(cmd_arr, list):
         raise TypeError('cmd_arr must be a list of commands')
 
+    # If sudo, run /usr/bin/sudo if not root
+    if sudo and uid != 0:
+        cmd_arr = ['/usr/bin/sudo'] + cmd_arr
+
     # Create a subprocess for the command, piping stdout, with stderr to
     # stdout for logging.
-    proc = subprocess.Popen(
-        cmd_arr,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT
-    )
+    try:
+        proc = subprocess.Popen(
+            cmd_arr,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT
+        )
 
-    # Command is done, get the stdout.
-    out, err = proc.communicate()
+        # Command is done, get the stdout.
+        out, err = proc.communicate()
+    except OSError as e:
+        out = None
+        err = 'subprocess OSError: {0}'.format(e)
 
     # Each stdout line is a log entry.
     if log_stdout_line:
@@ -104,6 +115,7 @@ def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True):
     # Iterate subprocess stderr, and write to the error log.
     err_arr = err.splitlines(True) if err else []
     for line in err_arr:
+
         log.error('[{0}] {1}'.format(
             ' '.join(cmd_arr),
             line.replace(b'\n', b'').decode('ascii', 'ignore')
@@ -177,13 +189,17 @@ def get_interface_addr(interface=None):
     try:
 
         # TODO: is this faster than ifconfig/ip route parsing?
-        return socket.inet_ntoa(
+        addr = socket.inet_ntoa(
             fcntl.ioctl(
                 s.fileno(),
                 0x8915,
                 struct.pack('256s', interface[:15])
             )[20:24]
         )
+
+        log.info('Address found for interface {0}: {1}'
+                 ''.format(interface, addr))
+        return addr
 
     except IOError:
 
@@ -207,9 +223,8 @@ def set_system_timezone(timezone='UTC'):
     log.info('Setting system timzone to {0}.'.format(timezone))
 
     # Try setting the timzone with timedatectl
-    out, err = popen_wrapper([
-        '/usr/bin/sudo', 'timedatectl', 'set-timezone', timezone
-    ])
+    cmd = ['timedatectl', 'set-timezone', timezone]
+    out, err = popen_wrapper(cmd, sudo=True)
 
     if out or err:
 
@@ -218,31 +233,38 @@ def set_system_timezone(timezone='UTC'):
                  'errors).'.format(timezone))
 
         # Backup localtime to /root/localtime.old
-        out, err = popen_wrapper(
-            ['/usr/bin/sudo', 'cp', '/etc/localtime', '/root/localtime.old'],
-            raise_err=True
-        )
+        cmd = ['cp', '/etc/localtime', '/root/localtime.old']
+        out, err = popen_wrapper(cmd, raise_err=True, sudo=True)
 
         # stdout is not expected on success.
-        if out and len(out) > 0:
-            raise SubprocessError(out)
+        if (out or err) and (len(out) > 0 or len(err) > 0):
+            raise SubprocessError('{0}{1}'.format(
+                '{0}\n'.format(out) if out else '',
+                '{0}\n'.format(err) if err else ''
+            ))
 
         # Remove /etc/localtime
-        out, err = popen_wrapper(
-            ['/usr/bin/sudo', 'rm', '/etc/localtime'], raise_err=True
-        )
+        cmd = ['rm', '/etc/localtime']
+        out, err = popen_wrapper(cmd, raise_err=True, sudo=True)
 
         # stdout is not expected on success.
-        if out and len(out) > 0:
-            raise SubprocessError(out)
+        if (out or err) and (len(out) > 0 or len(err) > 0):
+            raise SubprocessError('{0}{1}'.format(
+                '{0}\n'.format(out) if out else '',
+                '{0}\n'.format(err) if err else ''
+            ))
 
         # Create symbolic link to /usr/share/zoneinfo/{timezone} for
         # /etc/localtime
-        out, err = popen_wrapper([
-            '/usr/bin/sudo', 'ln',
-            '-s', '/usr/share/zoneinfo/{0}'.format(timezone), '/etc/localtime'
-        ], raise_err=True)
+        cmd = [
+            'ln', '-s', '/usr/share/zoneinfo/{0}'.format(timezone),
+            '/etc/localtime'
+        ]
+        out, err = popen_wrapper(cmd, raise_err=True, sudo=True)
 
         # stdout is not expected on success.
-        if out and len(out) > 0:
-            raise SubprocessError(out)
+        if (out or err) and (len(out) > 0 or len(err) > 0):
+            raise SubprocessError('{0}{1}'.format(
+                '{0}\n'.format(out) if out else '',
+                '{0}\n'.format(err) if err else ''
+            ))

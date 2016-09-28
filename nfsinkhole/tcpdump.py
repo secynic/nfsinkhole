@@ -72,7 +72,7 @@ class TCPDump:
 
         log.info('Checking tcpdump version.')
 
-        out, err = popen_wrapper([self.sbin, '-w'])
+        out, err = popen_wrapper([self.sbin, '-w'], log_stdout_line=False)
 
         tcpdump_version = None
         if out and len(out) > 0:
@@ -81,12 +81,17 @@ class TCPDump:
 
                 # TODO: eliminate loop, re search the whole output
                 if 'tcpdump version' in o:
-                    m = re.search('tcpdump\sversion\s([0-9]+\.[0-9]+)?.*', o)
 
+                    m = re.search('tcpdump\sversion\s([0-9]+\.[0-9]+)?.*', o)
                     try:
+
                         tcpdump_version = m.group(1)
+                        log.info('tcpdump version found: {0}'
+                                 ''.format(tcpdump_version))
 
                     except IndexError:
+
+                        log.info('tcpdump version not found')
                         pass
 
         return tcpdump_version

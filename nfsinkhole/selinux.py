@@ -47,8 +47,8 @@ class SELinux:
 
             log.info('Associating {0} with SELinux'.format(str(path)))
 
-            popen_wrapper(['/usr/bin/sudo', '/sbin/restorecon',
-                           '-v', str(path)])
+            cmd = ['/sbin/restorecon', '-v', str(path)]
+            popen_wrapper(cmd, sudo=True)
 
         else:
 

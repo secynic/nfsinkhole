@@ -61,7 +61,8 @@ class RSyslog:
 
         log.info('Checking rsyslog version.')
 
-        out, err = popen_wrapper(['rsyslogd', '-version'])
+        out, err = popen_wrapper(['rsyslogd', '-version'],
+                                 log_stdout_line=False)
 
         rsyslog_version = None
         if out and len(out) > 0:
@@ -112,13 +113,15 @@ class RSyslog:
                           '/var/log/nfsinkhole-events.log'))
 
         log.debug('Moving nfsinkhole.conf to /etc/rsyslog.d')
-        popen_wrapper(['/usr/bin/sudo', 'mv', 'nfsinkhole.conf',
-                       '/etc/rsyslog.d'])
+
+        cmd = ['mv', 'nfsinkhole.conf', '/etc/rsyslog.d']
+        popen_wrapper(cmd, sudo=True)
 
         log.debug('Setting root ownership for '
                   '/etc/rsyslog.d/nfsinkhole.conf')
-        popen_wrapper(['/usr/bin/sudo', 'chown', 'root:root',
-                       '/etc/rsyslog.d/nfsinkhole.conf'])
+
+        cmd = ['chown', 'root:root', '/etc/rsyslog.d/nfsinkhole.conf']
+        popen_wrapper(cmd, sudo=True)
 
     def delete_config(self):
         """
@@ -128,8 +131,9 @@ class RSyslog:
         log.info('Deleting rsyslog config')
 
         log.debug('Removing file: /etc/rsyslog.d/nfsinkhole.conf')
-        popen_wrapper(
-            ['/usr/bin/sudo', 'rm', '/etc/rsyslog.d/nfsinkhole.conf'])
+
+        cmd = ['rm', '/etc/rsyslog.d/nfsinkhole.conf']
+        popen_wrapper(cmd, sudo=True)
 
     def restart(self):
         """
@@ -141,10 +145,13 @@ class RSyslog:
         if self.is_systemd:
 
             log.debug('Restarting systemd rsyslog service (via systemctl)')
-            popen_wrapper(['/usr/bin/sudo', 'systemctl', 'restart',
-                           'rsyslog.service'])
+
+            cmd = ['systemctl', 'restart', 'rsyslog.service']
+            popen_wrapper(cmd, sudo=True)
 
         else:
 
             log.debug('Restarting init.d rsyslog service (via service)')
-            popen_wrapper(['/usr/bin/sudo', 'service', 'rsyslog', 'restart'])
+
+            cmd = ['service', 'rsyslog', 'restart']
+            popen_wrapper(cmd, sudo=True)
