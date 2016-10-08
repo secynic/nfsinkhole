@@ -101,10 +101,12 @@ def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True,
         # Iterate subprocess stdout, and write to the debug log.
         out_arr = out.splitlines(True) if out else []
         for line in out_arr:
+
             try:
                 tmp = line.decode('ascii', 'ignore').replace('\n', '')
-            except AttributeError:
+            except AttributeError:  # pragma: no cover
                 tmp = line.replace('\n', '')
+
             log.debug('[{0}] {1}'.format(
                 ' '.join(cmd_arr),
                 tmp
@@ -118,10 +120,12 @@ def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True,
     # Iterate subprocess stderr, and write to the error log.
     err_arr = err.splitlines(True) if err else []
     for line in err_arr:
+
         try:
             tmp = line.decode('ascii', 'ignore').replace('\n', '')
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             tmp = line.replace('\n', '')
+
         log.error('[{0}] {1}'.format(
             ' '.join(cmd_arr),
             tmp
@@ -131,9 +135,15 @@ def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True,
     # SubprocessError.
     if raise_err and err:
         arr = err.splitlines()
+
+        try:
+            tmp = b'\n'.join(arr).decode('ascii', 'ignore')
+        except TypeError:  # pragma: no cover
+            tmp = '\n'.join(arr)
+
         raise SubprocessError(
             'Error encountered when running process "{0}":\n{1}'.format(
-                ' '.join(cmd_arr), b'\n'.join(arr).decode('ascii', 'ignore')
+                ' '.join(cmd_arr), tmp
             )
         )
 
