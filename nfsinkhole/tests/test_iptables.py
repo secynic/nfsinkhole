@@ -74,6 +74,14 @@ class TestIPTablesSinkhole(TestCommon):
         # Exists
         self.assertRaises(IPTablesExists, myobj.create_rules)
 
+        # Content check
+        expected = [
+            '-N SINKHOLE'
+        ]
+        existing = myobj.list_existing_rules()
+        print(existing)
+        #self.assertSequenceEqual(existing, expected, seq_type=list)
+
     def _test_delete_rules(self):
 
         # Success
