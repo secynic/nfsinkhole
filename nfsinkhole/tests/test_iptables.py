@@ -70,4 +70,4 @@ class TestIPTablesSinkhole(TestCommon):
         myobj.delete_rules()
 
         # Exists
-        self.assertRaises(IPTablesNotExists, myobj.delete_rules())
+        self.assertRaises(IPTablesNotExists, myobj.delete_rules)
