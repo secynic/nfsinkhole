@@ -12,6 +12,15 @@ log = logging.getLogger(__name__)
 
 class TestIPTablesSinkhole(TestCommon):
 
+    def test_popen_wrapper(self):
+
+        # Argument checks
+        self.assertRaises(ValueError, popen_wrapper)
+        self.assertRaises(TypeError, popen_wrapper, 'notalist')
+
+        # OSError coverage
+        popen_wrapper(['asdasd'])
+
     def test_timezone(self):
 
         set_system_timezone('UTC')
