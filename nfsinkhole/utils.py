@@ -101,10 +101,13 @@ def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True,
         # Iterate subprocess stdout, and write to the debug log.
         out_arr = out.splitlines(True) if out else []
         for line in out_arr:
-
+            try:
+                tmp = line.decode('ascii', 'ignore').replace('\n', '')
+            except AttributeError:
+                tmp = line.replace('\n', '')
             log.debug('[{0}] {1}'.format(
                 ' '.join(cmd_arr),
-                line.decode('ascii', 'ignore').replace('\n', '')
+                tmp
             ))
 
     # Log stdout as a single entry.
@@ -115,9 +118,13 @@ def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True,
     # Iterate subprocess stderr, and write to the error log.
     err_arr = err.splitlines(True) if err else []
     for line in err_arr:
+        try:
+            tmp = line.decode('ascii', 'ignore').replace('\n', '')
+        except AttributeError:
+            tmp = line.replace('\n', '')
         log.error('[{0}] {1}'.format(
             ' '.join(cmd_arr),
-            line.decode('ascii', 'ignore').replace('\n', '')
+            tmp
         ))
 
     # If any errors, iterate them and write to log, then raise
