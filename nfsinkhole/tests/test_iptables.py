@@ -19,7 +19,6 @@ class TestIPTablesSinkhole(TestCommon):
             interface='~!@#$%^&*()',
         )
         myobj.create_drop_rule()
-        self.assertRaises(IPTablesExists, myobj.create_drop_rule)
 
         # Success
         myobj = IPTablesSinkhole(
@@ -29,6 +28,14 @@ class TestIPTablesSinkhole(TestCommon):
 
         # Exists
         self.assertRaises(IPTablesExists, myobj.create_drop_rule)
+
+        # Content check
+        expected = [
+            '-A INPUT -i eth1 -j DROP',
+            '-A OUTPUT -o eth1 -j DROP'
+        ]
+        existing = myobj.list_existing_rules(filter_io_drop=True)
+        self.assertListEqual(existing, expected)
 
     def _test_delete_drop_rule(self):
 
