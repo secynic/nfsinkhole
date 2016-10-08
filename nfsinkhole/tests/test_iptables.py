@@ -79,7 +79,7 @@ class TestIPTablesSinkhole(TestCommon):
             '-N SINKHOLE'
         ]
         existing = myobj.list_existing_rules()
-        print(existing)
+        log.debug('\n'.join(existing))
         #self.assertSequenceEqual(existing, expected, seq_type=list)
 
     def _test_delete_rules(self):
