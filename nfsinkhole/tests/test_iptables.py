@@ -35,7 +35,7 @@ class TestIPTablesSinkhole(TestCommon):
             '-A OUTPUT -o eth1 -j DROP'
         ]
         existing = myobj.list_existing_rules(filter_io_drop=True)
-        self.assertListEqual(existing, expected)
+        self.assertSequenceEqual(existing, expected, seq_type=list)
 
     def _test_delete_drop_rule(self):
 

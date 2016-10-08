@@ -35,3 +35,10 @@ class TestCommon(unittest.TestCase):
                     msg,
                     '{0} is not an instance of {1}'.format(obj, cls)
                 ))
+
+    if not hasattr(unittest.TestCase, 'assertSequenceEqual'):
+        def assertSequenceEqual(self, seq1, seq2, msg=None, seq_type=None):
+
+            # Basic Python 2.6 check instead of copying the whole
+            # assertSequenceEqual function from later Python versions
+            self.assertEqual(list(seq1), list(seq2))
