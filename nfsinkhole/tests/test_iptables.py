@@ -58,6 +58,7 @@ class TestIPTablesSinkhole(TestCommon):
         # Success
         myobj = IPTablesSinkhole(
             interface='eth1',
+            interface_addr='127.0.0.1'
         )
         myobj.create_rules()
 
@@ -69,6 +70,7 @@ class TestIPTablesSinkhole(TestCommon):
         # Success
         myobj = IPTablesSinkhole(
             interface='eth1',
+            interface_addr='127.0.0.1'
         )
         myobj.delete_rules()
 
