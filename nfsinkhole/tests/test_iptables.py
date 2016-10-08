@@ -77,7 +77,7 @@ class TestIPTablesSinkhole(TestCommon):
         # Content check
         expected = [
             '-N SINKHOLE',
-            ('-A INPUT -d 127.0.0.1 -i eth1 -p tcp -m hashlimit '
+            ('-A INPUT -d 127.0.0.1/32 -i eth1 -p tcp -m hashlimit '
              '--hashlimit-upto 1/hour --hashlimit-burst 1 --hashlimit-mode '
              'srcip,dstip,dstport --hashlimit-name sinkhole -m multiport '
              '--dports 0:53 -j SINKHOLE'),
