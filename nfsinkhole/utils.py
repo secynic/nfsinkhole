@@ -68,13 +68,13 @@ def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True,
             raise_err must be True for this.
     """
 
-    log.debug('Running: {0}'.format(' '.join(cmd_arr)))
-
     if not cmd_arr:
         raise ValueError('cmd_arr is required (list of commands)')
 
     if not isinstance(cmd_arr, list):
         raise TypeError('cmd_arr must be a list of commands')
+
+    log.debug('Running: {0}'.format(' '.join(cmd_arr)))
 
     # If sudo, run /usr/bin/sudo if not root
     if sudo and uid != 0:
