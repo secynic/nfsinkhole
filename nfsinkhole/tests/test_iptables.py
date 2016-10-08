@@ -76,11 +76,17 @@ class TestIPTablesSinkhole(TestCommon):
 
         # Content check
         expected = [
-            '-N SINKHOLE'
+            '-N SINKHOLE',
+            ('-A INPUT -d 127.0.0.1 -i eth1 -p tcp -m hashlimit '
+             '--hashlimit-upto 1/hour --hashlimit-burst 1 --hashlimit-mode '
+             'srcip,dstip,dstport --hashlimit-name sinkhole -m multiport '
+             '--dports 0:53 -j SINKHOLE'),
+            '-A SINKHOLE -s 127.0.0.1/32 -j RETURN',
+            '-A SINKHOLE -j LOG --log-prefix "[nfsinkhole] "',
+            '-A SINKHOLE -j NFLOG'
         ]
         existing = myobj.list_existing_rules()
-        log.debug('\n'.join(existing))
-        #self.assertSequenceEqual(existing, expected, seq_type=list)
+        self.assertSequenceEqual(existing, expected, seq_type=list)
 
     def _test_delete_rules(self):
 
