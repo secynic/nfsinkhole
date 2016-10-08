@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 
 class TestIPTablesSinkhole(TestCommon):
 
-    def test_create_drop_rule(self):
+    def _test_create_drop_rule(self):
 
         # Bad interface
         myobj = IPTablesSinkhole(
@@ -30,7 +30,7 @@ class TestIPTablesSinkhole(TestCommon):
         # Exists
         self.assertRaises(IPTablesExists, myobj.create_drop_rule)
 
-    def test_delete_drop_rule(self):
+    def _test_delete_drop_rule(self):
 
         # Bad interface
         myobj = IPTablesSinkhole(
@@ -48,7 +48,12 @@ class TestIPTablesSinkhole(TestCommon):
         # Exists
         self.assertRaises(IPTablesNotExists, myobj.delete_drop_rule)
 
-    def test_create_rules(self):
+    def test_drop_rule(self):
+
+        self._test_create_drop_rule()
+        self._test_delete_drop_rule()
+
+    def _test_create_rules(self):
 
         # Success
         myobj = IPTablesSinkhole(
@@ -60,7 +65,7 @@ class TestIPTablesSinkhole(TestCommon):
         # Exists
         self.assertRaises(IPTablesExists, myobj.create_rules)
 
-    def test_delete_rules(self):
+    def _test_delete_rules(self):
 
         # Success
         myobj = IPTablesSinkhole(
@@ -71,3 +76,8 @@ class TestIPTablesSinkhole(TestCommon):
 
         # Exists
         self.assertRaises(IPTablesNotExists, myobj.delete_rules)
+
+    def test_rules(self):
+
+        self._test_create_rules()
+        self._test_delete_rules()
