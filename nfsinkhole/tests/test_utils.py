@@ -17,13 +17,12 @@ class TestIPTablesSinkhole(TestCommon):
         # Argument checks
         self.assertRaises(ValueError, popen_wrapper)
         self.assertRaises(TypeError, popen_wrapper, 'notalist')
+
+        # raise_err test
         self.assertRaises(SubprocessError, popen_wrapper, **dict(
             cmd_arr=['asdasd'],
             raise_err=True
         ))
-
-        # OSError coverage
-        popen_wrapper(['asdasd'])
 
     def test_timezone(self):
 
