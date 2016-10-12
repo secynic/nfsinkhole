@@ -108,14 +108,14 @@ class IPTablesSinkhole:
 
             out, err = popen_wrapper(cmd, sudo=True)
 
-        except OSError as e:
+        except OSError as e:  # pragma: no cover
 
             raise IPTablesError('Error encountered when running process "{0}":'
                                 '\n{1}'.format(' '.join(cmd), e))
 
         # If any errors, iterate them and write to log, then raise
         # IPTablesError.
-        if err:
+        if err:  # pragma: no cover
 
             arr = err.splitlines()
             raise IPTablesError('Error encountered when running process "{0}":'
@@ -265,7 +265,7 @@ class IPTablesSinkhole:
 
             popen_wrapper(cmd_arr=tmp_arr, raise_err=True, sudo=True)
 
-        except SubprocessError as e:
+        except SubprocessError as e:  # pragma: no cover
 
             raise IPTablesError(e)
 

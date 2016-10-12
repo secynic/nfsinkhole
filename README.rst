@@ -17,16 +17,8 @@ nfsinkhole
 .. image:: https://img.shields.io/badge/docs-dev-yellow.svg?style=flat
     :target: https://nfsinkhole.readthedocs.io/en/dev
 
-.. warning::
-
-    This version is considered experimental. Do not attempt to use this
-    library in production until tests via travis and docker are setup, stable,
-    and sufficiently covered.
-
-.. attention::
-
-    You are responsible for rotating log files (/var/log/nfsinkhole*), and
-    syslog forwarding must be configured manually (automation pending).
+Summary
+=======
 
 nfsinkhole is a Python library and scripts for setting up a Unix server
 as a sinkhole (monitor, log/capture, and drop all traffic to a secondary
@@ -40,6 +32,17 @@ All sinkhole events are written to /var/log/nfsinkhole-events.log. Optionally,
 you can enable tcpdump to output packet capture text to
 /var/log/nfsinkhole-pcap.log if your version of tcpdump supports packet
 printing; otherwise reverts to /var/log/nfsinkhole.pcap.
+
+.. warning::
+
+    This version is considered experimental. Do not attempt to use this
+    library in production until tests via travis and docker are setup, stable,
+    and sufficiently covered.
+
+.. attention::
+
+    You are responsible for rotating log files (/var/log/nfsinkhole*), and
+    syslog forwarding must be configured manually (automation pending).
 
 Features
 ========
