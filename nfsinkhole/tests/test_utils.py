@@ -18,7 +18,7 @@ class TestIPTablesSinkhole(TestCommon):
         # Argument checks
         self.assertRaises(ValueError, popen_wrapper)
         self.assertRaises(TypeError, popen_wrapper, 'notalist')
-        self.assertNotEqual(popen_wrapper('ls', log_stdout_line=False), None)
+        self.assertNotEqual(popen_wrapper(['ls'], log_stdout_line=False), None)
 
         # raise_err test
         self.assertRaises(SubprocessError, popen_wrapper, **dict(
