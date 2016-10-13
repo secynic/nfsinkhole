@@ -207,7 +207,7 @@ def get_interface_addr(interface=None):
         # py3, except py2
         try:
             iface = bytes(interface[:15], encoding='utf-8')
-        except TypeError:
+        except TypeError:  # pragma: no cover
             iface = interface[:15]
 
         # TODO: is this faster than ifconfig/ip route parsing?
@@ -246,6 +246,9 @@ def set_system_timezone(timezone='UTC'):
 
     # Try setting the timzone with timedatectl
     cmd = ['timedatectl', 'set-timezone', timezone]
+    if uid != 0:
+        cmd = ['/usr/bin/sudo'] + cmd
+
     out, err = popen_wrapper(cmd, sudo=True)
 
     if out or err:
@@ -256,6 +259,8 @@ def set_system_timezone(timezone='UTC'):
 
         # Backup localtime to /root/localtime.old
         cmd = ['cp', '/etc/localtime', '/root/localtime.old']
+        if uid != 0:
+            cmd = ['/usr/bin/sudo'] + cmd
         out, err = popen_wrapper(cmd, raise_err=True, sudo=True)
 
         # stdout is not expected on success.
@@ -267,6 +272,8 @@ def set_system_timezone(timezone='UTC'):
 
         # Remove /etc/localtime
         cmd = ['rm', '/etc/localtime']
+        if uid != 0:
+            cmd = ['/usr/bin/sudo'] + cmd
         out, err = popen_wrapper(cmd, raise_err=True, sudo=True)
 
         # stdout is not expected on success.
@@ -282,6 +289,8 @@ def set_system_timezone(timezone='UTC'):
             'ln', '-s', '/usr/share/zoneinfo/{0}'.format(timezone),
             '/etc/localtime'
         ]
+        if uid != 0:
+            cmd = ['/usr/bin/sudo'] + cmd
         out, err = popen_wrapper(cmd, raise_err=True, sudo=True)
 
         # stdout is not expected on success.
