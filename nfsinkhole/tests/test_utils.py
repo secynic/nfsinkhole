@@ -25,7 +25,7 @@ class TestIPTablesSinkhole(TestCommon):
             raise_err=True
         ))
 
-    def get_default_interface(self):
+    def test_get_default_interface(self):
 
         self.assertNotEqual(get_default_interface(), None)
 
