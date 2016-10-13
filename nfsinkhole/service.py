@@ -108,7 +108,10 @@ class SystemService:
             table.
         srcexclude: Exclude a comma separated string of source IPs/CIDRs from
             logging.
-        pcap: Enable packet capture text or raw depending on tcpdump version.'
+        pcap: Enable packet capture text or raw depending on tcpdump version.
+        loglevel: Logging level for nfsinkhole events. This does not affect
+            sinkhole traffic logs, only service/library event logs. Must be
+            one of debug, info, warning, error, critical.
     """
 
     def __init__(self, interface=None, interface_addr=None,
@@ -116,7 +119,7 @@ class SystemService:
                  protocol='all', dport='0:65535',
                  hashlimit='1/h', hashlimitmode='srcip,dstip,dstport',
                  hashlimitburst='1', hashlimitexpire='3600000',
-                 srcexclude='127.0.0.1', pcap=True
+                 srcexclude='127.0.0.1', pcap=True, loglevel='info'
                  ):
 
         self.exists = os.path.exists('/etc/systemd')
@@ -133,6 +136,7 @@ class SystemService:
         self.hashlimitburst = hashlimitburst
         self.hashlimitexpire = hashlimitexpire
         self.srcexclude = srcexclude
+        self.loglevel = loglevel
 
         # Check if packet printing is supported
         tcp_dump = TCPDump()
@@ -178,6 +182,7 @@ class SystemService:
                 '--hashlimitburst {hashlimitburst} '
                 '--hashlimitexpire {hashlimitexpire} '
                 '--srcexclude {srcexclude} '
+                '--loglevel {loglevel} '
                 ''.format(
                     pyfp=sys.executable,
                     fp=os.path.dirname(sys.executable),
@@ -189,17 +194,19 @@ class SystemService:
                     hashlimitmode=self.hashlimitmode,
                     hashlimitburst=self.hashlimitburst,
                     hashlimitexpire=self.hashlimitexpire,
-                    srcexclude=self.srcexclude
+                    srcexclude=self.srcexclude,
+                    loglevel=self.loglevel
                 )
             )
 
             # Run after main process stops
             execstop = (
                 '-{pyfp} {fp}/nfsinkhole-service.py '
-                '--delete --interface {interface}'.format(
+                '--delete --interface {interface} --loglevel {loglevel}'.format(
                     pyfp=sys.executable,
                     fp=os.path.dirname(sys.executable),
-                    interface=self.interface
+                    interface=self.interface,
+                    loglevel=self.loglevel
                 )
             )
 

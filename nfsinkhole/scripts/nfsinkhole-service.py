@@ -36,10 +36,10 @@ from nfsinkhole.utils import (ANSI, popen_wrapper, get_interface_addr)
 LOG_FORMAT = ('[%(asctime)s.%(msecs)03d] [%(levelname)s] '
               '[%(filename)s:%(lineno)s] [%(funcName)s()] %(message)s')
 logging.basicConfig(filename='/tmp/nfsinkhole-service.log', format=LOG_FORMAT,
-                    level=logging.DEBUG, datefmt='%Y-%m-%dT%H:%M:%S')
+                    level=logging.INFO, datefmt='%Y-%m-%dT%H:%M:%S')
 logging.Formatter.converter = time.gmtime
 log = logging.getLogger(__name__)
-log.debug('nfsinkhole-service.py called')
+log.info('nfsinkhole-service.py called')
 
 # Setup the arg parser.
 parser = argparse.ArgumentParser(
@@ -123,6 +123,16 @@ parser.add_argument(
     help='Exclude a comma separated string of source IPs/CIDRs from logging.'
 )
 
+parser.add_argument(
+    '--loglevel',
+    type=str,
+    default='info',
+    choices=['debug', 'info', 'warning', 'error', 'critical'],
+    help='Logging level for nfsinkhole events. This does not affect sinkhole '
+         'traffic logs, only service/library event logs. Must be one of debug,'
+         ' info, warning, error, critical.'
+)
+
 # Input (required)
 group = parser.add_argument_group('Input (Required)')
 
@@ -140,6 +150,9 @@ group.add_argument(
 
 # Get the args
 script_args = parser.parse_args()
+
+# Set log level based on loglevel argument.
+log.setLevel(getattr(logging, script_args.loglevel.upper()))
 
 # Get the network interface info
 interface = script_args.interface
