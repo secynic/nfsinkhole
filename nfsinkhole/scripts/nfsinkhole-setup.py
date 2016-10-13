@@ -36,14 +36,6 @@ from nfsinkhole.service import SystemService
 from nfsinkhole.syslog_ng import SyslogNG
 from nfsinkhole.utils import (ANSI, popen_wrapper, set_system_timezone)
 
-# TODO: add --log_level arg, currently set to debug
-LOG_FORMAT = ('[%(asctime)s.%(msecs)03d] [%(levelname)s] '
-              '[%(filename)s:%(lineno)s] [%(funcName)s()] %(message)s')
-logging.basicConfig(filename='nfsinkhole-setup.log', format=LOG_FORMAT,
-                    level=logging.INFO, datefmt='%Y-%m-%dT%H:%M:%S')
-logging.Formatter.converter = time.gmtime
-log = logging.getLogger(__name__)
-log.info('nfsinkhole-setup.py called')
 uid = os.geteuid()  # Unix req; autodoc_mock_imports for Sphinx cross platform
 
 scripts_dir = os.path.dirname(os.path.realpath(__file__))
@@ -180,8 +172,15 @@ group.add_argument(
 # Get the args
 script_args = parser.parse_args()
 
-# Set log level based on loglevel argument.
-log.setLevel(getattr(logging, script_args.loglevel.upper()))
+# Logging
+LOG_FORMAT = ('[%(asctime)s.%(msecs)03d] [%(levelname)s] '
+              '[%(filename)s:%(lineno)s] [%(funcName)s()] %(message)s')
+logging.basicConfig(filename='nfsinkhole-setup.log', format=LOG_FORMAT,
+                    level=getattr(logging, script_args.loglevel.upper()),
+                    datefmt='%Y-%m-%dT%H:%M:%S')
+logging.Formatter.converter = time.gmtime
+log = logging.getLogger(__name__)
+log.info('nfsinkhole-setup.py called')
 
 # Check if systemd or legacy
 system_service = SystemService(

@@ -32,15 +32,6 @@ from nfsinkhole.exceptions import (IPTablesError, IPTablesExists,
 from nfsinkhole.iptables import IPTablesSinkhole
 from nfsinkhole.utils import (ANSI, popen_wrapper, get_interface_addr)
 
-# TODO: add --log_level arg, currently set to debug
-LOG_FORMAT = ('[%(asctime)s.%(msecs)03d] [%(levelname)s] '
-              '[%(filename)s:%(lineno)s] [%(funcName)s()] %(message)s')
-logging.basicConfig(filename='/tmp/nfsinkhole-service.log', format=LOG_FORMAT,
-                    level=logging.INFO, datefmt='%Y-%m-%dT%H:%M:%S')
-logging.Formatter.converter = time.gmtime
-log = logging.getLogger(__name__)
-log.info('nfsinkhole-service.py called')
-
 # Setup the arg parser.
 parser = argparse.ArgumentParser(
     description='nfsinkhole service script',
@@ -151,8 +142,15 @@ group.add_argument(
 # Get the args
 script_args = parser.parse_args()
 
-# Set log level based on loglevel argument.
-log.setLevel(getattr(logging, script_args.loglevel.upper()))
+# Logging
+LOG_FORMAT = ('[%(asctime)s.%(msecs)03d] [%(levelname)s] '
+              '[%(filename)s:%(lineno)s] [%(funcName)s()] %(message)s')
+logging.basicConfig(filename='/tmp/nfsinkhole-service.log', format=LOG_FORMAT,
+                    level=getattr(logging, script_args.loglevel.upper()),
+                    datefmt='%Y-%m-%dT%H:%M:%S')
+logging.Formatter.converter = time.gmtime
+log = logging.getLogger(__name__)
+log.info('nfsinkhole-service.py called')
 
 # Get the network interface info
 interface = script_args.interface
