@@ -204,12 +204,18 @@ def get_interface_addr(interface=None):
     log.debug('Attempting IP extract/conversion... '.format(interface))
     try:
 
+        # py3, except py2
+        try:
+            iface = bytes(interface[:15], encoding='utf-8')
+        except TypeError:
+            iface = interface[:15]
+
         # TODO: is this faster than ifconfig/ip route parsing?
         addr = socket.inet_ntoa(
             fcntl.ioctl(
                 s.fileno(),
                 0x8915,
-                struct.pack('256s', bytes(interface[:15], encoding='utf-8'))
+                struct.pack('256s', iface)
             )[20:24]
         )
 
