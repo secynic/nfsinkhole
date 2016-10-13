@@ -209,7 +209,7 @@ def get_interface_addr(interface=None):
             fcntl.ioctl(
                 s.fileno(),
                 0x8915,
-                struct.pack('256s', interface[:15])
+                struct.pack('256s', bytes(interface[:15]))
             )[20:24]
         )
 
