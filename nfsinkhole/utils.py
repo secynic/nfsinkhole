@@ -256,27 +256,11 @@ def set_system_timezone(timezone='UTC'):
 
         # Backup localtime to /root/localtime.old
         cmd = ['cp', '/etc/localtime', '/root/localtime.old']
-        out, err = popen_wrapper(cmd, raise_err=True, sudo=True)
-
-        '''
-        I don't think this is needed with raise_err=True
-        # stdout is not expected on success.
-        if (out or err) and (len(out) > 0 or len(err) > 0):
-            raise SubprocessError('{0}{1}'.format(
-                '{0}\n'.format(out) if out else '',
-                '{0}\n'.format(err) if err else ''
-            ))'''
+        popen_wrapper(cmd, raise_err=True, sudo=True)
 
         # Remove /etc/localtime
         cmd = ['rm', '/etc/localtime']
-        out, err = popen_wrapper(cmd, raise_err=True, sudo=True)
-
-        # stdout is not expected on success.
-        if (out or err) and (len(out) > 0 or len(err) > 0):
-            raise SubprocessError('{0}{1}'.format(
-                '{0}\n'.format(out) if out else '',
-                '{0}\n'.format(err) if err else ''
-            ))
+        popen_wrapper(cmd, raise_err=True, sudo=True)
 
         # Create symbolic link to /usr/share/zoneinfo/{timezone} for
         # /etc/localtime
@@ -284,11 +268,4 @@ def set_system_timezone(timezone='UTC'):
             'ln', '-s', '/usr/share/zoneinfo/{0}'.format(timezone),
             '/etc/localtime'
         ]
-        out, err = popen_wrapper(cmd, raise_err=True, sudo=True)
-
-        # stdout is not expected on success.
-        if (out or err) and (len(out) > 0 or len(err) > 0):
-            raise SubprocessError('{0}{1}'.format(
-                '{0}\n'.format(out) if out else '',
-                '{0}\n'.format(err) if err else ''
-            ))
+        popen_wrapper(cmd, raise_err=True, sudo=True)
