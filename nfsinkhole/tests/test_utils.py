@@ -2,7 +2,8 @@ import logging
 from nfsinkhole.exceptions import (IPTablesError, IPTablesExists,
                                    IPTablesNotExists, SubprocessError)
 from nfsinkhole.tests import TestCommon
-from nfsinkhole.utils import (popen_wrapper, set_system_timezone)
+from nfsinkhole.utils import (popen_wrapper, get_default_interface,
+                              get_interface_addr, set_system_timezone)
 
 LOG_FORMAT = ('[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)s] '
               '[%(funcName)s()] %(message)s')
@@ -23,6 +24,10 @@ class TestIPTablesSinkhole(TestCommon):
             cmd_arr=['asdasd'],
             raise_err=True
         ))
+
+    def get_default_interface(self):
+
+        self.assertNotEqual(get_default_interface(), None)
 
     def test_timezone(self):
 

@@ -176,7 +176,7 @@ def get_default_interface():
         log.info('Default network interface found: {0}'
                  ''.format(default_interface))
 
-    else:
+    else:  # pragma: no cover
 
         log.info('Default network interface not found')
 
