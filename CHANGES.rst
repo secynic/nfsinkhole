@@ -6,6 +6,8 @@ Changelog
 
 - Added syslog-ng support (#2)
 - Added sudo arg to utils.popen_wrapper() - code consolidation
+- Adding loglevel argument to scripts and service.SystemService (#5). Defaults
+  to info. Travis defaults to debug.
 - Fixed bytes to str decoding issue on Python 3
 - Fixed splitlines list[bytes] decode on Python 3
 - Logging output tweaks

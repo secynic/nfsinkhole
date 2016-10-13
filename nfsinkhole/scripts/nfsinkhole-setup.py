@@ -36,14 +36,6 @@ from nfsinkhole.service import SystemService
 from nfsinkhole.syslog_ng import SyslogNG
 from nfsinkhole.utils import (ANSI, popen_wrapper, set_system_timezone)
 
-# TODO: add --log_level arg, currently set to debug
-LOG_FORMAT = ('[%(asctime)s.%(msecs)03d] [%(levelname)s] '
-              '[%(filename)s:%(lineno)s] [%(funcName)s()] %(message)s')
-logging.basicConfig(filename='nfsinkhole-setup.log', format=LOG_FORMAT,
-                    level=logging.DEBUG, datefmt='%Y-%m-%dT%H:%M:%S')
-logging.Formatter.converter = time.gmtime
-log = logging.getLogger(__name__)
-log.debug('nfsinkhole-setup.py called')
 uid = os.geteuid()  # Unix req; autodoc_mock_imports for Sphinx cross platform
 
 scripts_dir = os.path.dirname(os.path.realpath(__file__))
@@ -152,6 +144,16 @@ parser.add_argument(
          )
 )
 
+parser.add_argument(
+    '--loglevel',
+    type=str,
+    default='info',
+    choices=['debug', 'info', 'warning', 'error', 'critical'],
+    help='Logging level for nfsinkhole events. This does not affect sinkhole '
+         'traffic logs, only service/library event logs. Must be one of debug,'
+         ' info, warning, error, critical.'
+)
+
 # Input (required)
 group = parser.add_argument_group('Input (Required)')
 
@@ -170,6 +172,16 @@ group.add_argument(
 # Get the args
 script_args = parser.parse_args()
 
+# Logging
+LOG_FORMAT = ('[%(asctime)s.%(msecs)03d] [%(levelname)s] '
+              '[%(filename)s:%(lineno)s] [%(funcName)s()] %(message)s')
+logging.basicConfig(filename='nfsinkhole-setup.log', format=LOG_FORMAT,
+                    level=getattr(logging, script_args.loglevel.upper()),
+                    datefmt='%Y-%m-%dT%H:%M:%S')
+logging.Formatter.converter = time.gmtime
+log = logging.getLogger(__name__)
+log.info('nfsinkhole-setup.py called')
+
 # Check if systemd or legacy
 system_service = SystemService(
     interface=script_args.interface,
@@ -181,7 +193,8 @@ system_service = SystemService(
     hashlimitburst=script_args.hashlimitburst,
     hashlimitexpire=script_args.hashlimitexpire,
     srcexclude=script_args.srcexclude,
-    pcap=script_args.pcap
+    pcap=script_args.pcap,
+    loglevel=script_args.loglevel
 )
 is_systemd, svc_path = system_service.check_systemd()
 
