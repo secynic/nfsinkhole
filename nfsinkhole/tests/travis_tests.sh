@@ -16,6 +16,7 @@ if [ "${TRAVIS_PYTHON_VERSION}" = "2.7" ]; then
     sudo docker exec nfsinkholevm /bin/sh -c "yum -y -q install rsyslog"
     sudo docker exec nfsinkholevm /bin/sh -c "yum -y -q install epel-release && yum clean all"
     sudo docker exec nfsinkholevm /bin/sh -c "yum -y -q install python-pip && yum clean all"
+    sudo docker exec nfsinkholevm /bin/sh -c "pip install coverage"
     sudo docker exec nfsinkholevm /bin/sh -c "pip install nose"
     sudo docker exec nfsinkholevm /bin/sh -c "ifconfig"
     sudo docker exec nfsinkholevm /bin/sh -c "ls -al /root/nfsinkhole"
@@ -35,6 +36,6 @@ if [ "${TRAVIS_PYTHON_VERSION}" = "2.7" ]; then
     sudo docker exec nfsinkholevm /bin/sh -c "cat /var/log/nfsinkhole-setup.log && rm /var/log/nfsinkhole-setup.log"
     sudo docker exec nfsinkholevm /bin/sh -c "ls -al /root/nfsinkhole"
     sudo docker exec nfsinkholevm /bin/sh -c "ls -al /root/nfsinkhole/nfsinkhole"
-    sudo docker cp nfsinkholevm:/root/nfsinkhole/*.coverage .
+    sudo docker cp nfsinkholevm:/root/nfsinkhole/.coverage .
     coveralls --rcfile=.coveragerc
 fi
