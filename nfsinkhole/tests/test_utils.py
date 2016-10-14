@@ -1,6 +1,5 @@
 import logging
-from nfsinkhole.exceptions import (IPTablesError, IPTablesExists,
-                                   IPTablesNotExists, SubprocessError)
+from nfsinkhole.exceptions import SubprocessError
 from nfsinkhole.tests import TestCommon
 from nfsinkhole.utils import (popen_wrapper, get_default_interface,
                               get_interface_addr, set_system_timezone)
