@@ -35,18 +35,3 @@ class TestIPTablesSinkhole(TestCommon):
     def test_timezone(self):
 
         set_system_timezone('UTC')
-
-        # Remove UTC zoneinfo
-        popen_wrapper(['rm', '/usr/share/zoneinfo/UTC'], raise_err=True,
-                      sudo=True)
-
-        # UTC is removed, set_system_timezone should fail on symlink attempt
-        #self.assertRaises(SubprocessError, set_system_timezone, 'UTC')
-        set_system_timezone('UTC')
-
-        # unlink /etc/localtime
-        popen_wrapper(['unlink', '/etc/localtime'], raise_err=True, sudo=True)
-
-        # localtime is unlinked, set_system_timezone should fail on unlink
-        # attempt
-        self.assertRaises(SubprocessError, set_system_timezone, 'UTC')

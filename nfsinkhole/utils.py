@@ -254,28 +254,11 @@ def set_system_timezone(timezone='UTC'):
         log.info('Reverting to manual timezone config (no timedatectl, or '
                  'errors).'.format(timezone))
 
-        # unlink localtime
-        cmd = ['unlink', '/etc/localtime']
-        out, err = popen_wrapper(cmd, raise_err=True, sudo=True)
-
-        # stdout is not expected on success.
-        if (out or err) and (len(out) > 0 or len(err) > 0):
-            raise SubprocessError('{0}{1}'.format(
-                '{0}\n'.format(out) if out else '',
-                '{0}\n'.format(err) if err else ''
-            ))
-
+        # TODO: this won't fail even if timezone is invalid
         # Create symbolic link to /usr/share/zoneinfo/{timezone} for
         # /etc/localtime
         cmd = [
-            'ln', '-s', '/usr/share/zoneinfo/{0}'.format(timezone),
+            'ln', '-fs', '/usr/share/zoneinfo/{0}'.format(timezone),
             '/etc/localtime'
         ]
-        out, err = popen_wrapper(cmd, raise_err=True, sudo=True)
-
-        # stdout is not expected on success.
-        if (out or err) and (len(out) > 0 or len(err) > 0):
-            raise SubprocessError('{0}{1}'.format(
-                '{0}\n'.format(out) if out else '',
-                '{0}\n'.format(err) if err else ''
-            ))
+        popen_wrapper(cmd, raise_err=True, sudo=True)
