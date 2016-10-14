@@ -17,6 +17,7 @@ if [ "${TRAVIS_PYTHON_VERSION}" = "2.7" ]; then
     sudo docker exec nfsinkholevm /bin/sh -c "yum -y -q install epel-release && yum clean all"
     sudo docker exec nfsinkholevm /bin/sh -c "yum -y -q install python-pip && yum clean all"
     sudo docker exec nfsinkholevm /bin/sh -c "pip install coveralls"
+    sudo docker exec nfsinkholevm /bin/sh -c "pip install nose"
     sudo docker exec nfsinkholevm /bin/sh -c "ifconfig"
     sudo docker exec nfsinkholevm /bin/sh -c "ls -al /root/nfsinkhole"
     sudo docker exec nfsinkholevm /bin/sh -c "cd /root/nfsinkhole/ && python setup.py install"
