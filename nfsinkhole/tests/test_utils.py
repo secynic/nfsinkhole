@@ -43,8 +43,9 @@ class TestIPTablesSinkhole(TestCommon):
         # UTC is removed, set_system_timezone should fail on symlink attempt
         self.assertRaises(SubprocessError, set_system_timezone, 'UTC')
 
-        # Remove /etc/localtime
-        popen_wrapper(['rm', '/etc/localtime'], raise_err=True, sudo=True)
+        # unlink /etc/localtime
+        popen_wrapper(['unlink', '/etc/localtime'], raise_err=True, sudo=True)
 
-        # localtime is removed, set_system_timezone should fail on copy attempt
+        # localtime is unlinked, set_system_timezone should fail on unlink
+        # attempt
         self.assertRaises(SubprocessError, set_system_timezone, 'UTC')
