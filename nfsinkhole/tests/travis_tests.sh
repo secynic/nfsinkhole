@@ -36,6 +36,7 @@ if [ "${TRAVIS_PYTHON_VERSION}" = "2.7" ]; then
     sudo docker exec nfsinkholevm /bin/sh -c "cat /var/log/nfsinkhole-setup.log && rm /var/log/nfsinkhole-setup.log"
     sudo docker exec nfsinkholevm /bin/sh -c "ls -al /root/nfsinkhole"
     sudo docker exec nfsinkholevm /bin/sh -c "ls -al /root/nfsinkhole/nfsinkhole"
+    sudo docker exec nfsinkholevm /bin/sh -c "find / -name .coverage"
     sudo docker cp nfsinkholevm:/root/nfsinkhole/.coverage .
     coveralls --rcfile=.coveragerc
 fi
