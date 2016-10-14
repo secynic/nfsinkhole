@@ -10,6 +10,8 @@ services:
   - docker
 before_install:
   - chmod ugo+x nfsinkhole/tests/travis_tests.sh
+  - sudo apt-get -qq update
+  - sudo apt-get install -y selinux
 install:
   - if [[ $TRAVIS_PYTHON_VERSION == 2.6* ]]; then pip install -r requirements/python2.6.txt; fi
   - pip install coveralls
