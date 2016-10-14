@@ -10,4 +10,9 @@ services:
   - docker
 before_install:
   - chmod ugo+x nfsinkhole/tests/travis_tests.sh
+install:
+  - pip install coveralls
+  - python setup.py install
 script: ./nfsinkhole/tests/travis_tests.sh
+after_script:
+  - coveralls --rcfile=.coveragerc
