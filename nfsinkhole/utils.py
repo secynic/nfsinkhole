@@ -176,7 +176,7 @@ def get_default_interface():
         log.info('Default network interface found: {0}'
                  ''.format(default_interface))
 
-    else:
+    else:  # pragma: no cover
 
         log.info('Default network interface not found')
 
@@ -204,12 +204,18 @@ def get_interface_addr(interface=None):
     log.debug('Attempting IP extract/conversion... '.format(interface))
     try:
 
+        # py3, except py2
+        try:
+            iface = bytes(interface[:15], encoding='utf-8')
+        except TypeError:  # pragma: no cover
+            iface = interface[:15]
+
         # TODO: is this faster than ifconfig/ip route parsing?
         addr = socket.inet_ntoa(
             fcntl.ioctl(
                 s.fileno(),
                 0x8915,
-                struct.pack('256s', interface[:15])
+                struct.pack('256s', iface)
             )[20:24]
         )
 
@@ -224,12 +230,14 @@ def get_interface_addr(interface=None):
         return None
 
 
-def set_system_timezone(timezone='UTC'):
+def set_system_timezone(timezone='UTC', skip_timedatectl=False):
     """
     The function for setting the system timezone.
 
     Args:
         timezone: The timezone to set, see /usr/share/zoneinfo/* for options.
+        skip_timedatectl: Skip attempting to set the timezone via timedatectl,
+            mainly used for testing.
 
     Raises:
         SubprocessError: One of the processes associated with manual timezone
@@ -238,49 +246,25 @@ def set_system_timezone(timezone='UTC'):
 
     log.info('Setting system timzone to {0}.'.format(timezone))
 
-    # Try setting the timzone with timedatectl
-    cmd = ['timedatectl', 'set-timezone', timezone]
-    out, err = popen_wrapper(cmd, sudo=True)
+    out = None
+    err = None
+    if not skip_timedatectl:
 
-    if out or err:
+        # Try setting the timzone with timedatectl
+        cmd = ['timedatectl', 'set-timezone', timezone]
+        out, err = popen_wrapper(cmd, sudo=True)
+
+    if skip_timedatectl or out or err:
 
         # timedatectl failed or missing, set /etc/localtime manually
         log.info('Reverting to manual timezone config (no timedatectl, or '
                  'errors).'.format(timezone))
 
-        # Backup localtime to /root/localtime.old
-        cmd = ['cp', '/etc/localtime', '/root/localtime.old']
-        out, err = popen_wrapper(cmd, raise_err=True, sudo=True)
-
-        # stdout is not expected on success.
-        if (out or err) and (len(out) > 0 or len(err) > 0):
-            raise SubprocessError('{0}{1}'.format(
-                '{0}\n'.format(out) if out else '',
-                '{0}\n'.format(err) if err else ''
-            ))
-
-        # Remove /etc/localtime
-        cmd = ['rm', '/etc/localtime']
-        out, err = popen_wrapper(cmd, raise_err=True, sudo=True)
-
-        # stdout is not expected on success.
-        if (out or err) and (len(out) > 0 or len(err) > 0):
-            raise SubprocessError('{0}{1}'.format(
-                '{0}\n'.format(out) if out else '',
-                '{0}\n'.format(err) if err else ''
-            ))
-
+        # TODO: this won't fail even if timezone is invalid
         # Create symbolic link to /usr/share/zoneinfo/{timezone} for
         # /etc/localtime
         cmd = [
-            'ln', '-s', '/usr/share/zoneinfo/{0}'.format(timezone),
+            'ln', '-fs', '/usr/share/zoneinfo/{0}'.format(timezone),
             '/etc/localtime'
         ]
-        out, err = popen_wrapper(cmd, raise_err=True, sudo=True)
-
-        # stdout is not expected on success.
-        if (out or err) and (len(out) > 0 or len(err) > 0):
-            raise SubprocessError('{0}{1}'.format(
-                '{0}\n'.format(out) if out else '',
-                '{0}\n'.format(err) if err else ''
-            ))
+        popen_wrapper(cmd, raise_err=True, sudo=True)
