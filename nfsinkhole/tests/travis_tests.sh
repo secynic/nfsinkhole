@@ -21,7 +21,7 @@ if [ "${TRAVIS_PYTHON_VERSION}" = "2.7" ]; then
     sudo docker exec nfsinkholevm /bin/sh -c "ifconfig"
     sudo docker exec nfsinkholevm /bin/sh -c "ls -al /root/nfsinkhole"
     sudo docker exec nfsinkholevm /bin/sh -c "cd /root/nfsinkhole/ && python setup.py install"
-    sudo docker exec nfsinkholevm /bin/sh -c "nosetests -v -w /root/nfsinkhole/nfsinkhole --include=docker --with-coverage --cover-package=nfsinkhole"
+    sudo docker exec nfsinkholevm /bin/sh -c "cd /root/nfsinkhole/ && nosetests -v -w /root/nfsinkhole/nfsinkhole --include=docker --with-coverage --cover-package=nfsinkhole"
     sudo docker exec --privileged nfsinkholevm /bin/sh -c "python /usr/bin/nfsinkhole-setup.py --interface eth1 --install --pcap --loglevel debug"
     sudo docker exec nfsinkholevm /bin/sh -c "cat /var/log/nfsinkhole-setup.log && rm /var/log/nfsinkhole-setup.log"
     sudo docker exec --privileged nfsinkholevm /bin/sh -c "systemctl start nfsinkhole.service"
@@ -36,6 +36,7 @@ if [ "${TRAVIS_PYTHON_VERSION}" = "2.7" ]; then
     sudo docker exec nfsinkholevm /bin/sh -c "cat /var/log/nfsinkhole-setup.log && rm /var/log/nfsinkhole-setup.log"
     sudo docker exec nfsinkholevm /bin/sh -c "ls -al /root/nfsinkhole"
     sudo docker exec nfsinkholevm /bin/sh -c "ls -al /root/nfsinkhole/nfsinkhole"
+    sudo docker exec nfsinkholevm /bin/sh -c "ls -al /"
     sudo docker exec nfsinkholevm /bin/sh -c "find / -name .coverage"
     sudo docker cp nfsinkholevm:/root/nfsinkhole/.coverage .
     coveralls --rcfile=.coveragerc
