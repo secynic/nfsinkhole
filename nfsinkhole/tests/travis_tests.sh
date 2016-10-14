@@ -34,6 +34,7 @@ if [ "${TRAVIS_PYTHON_VERSION}" = "2.7" ]; then
     sudo docker exec nfsinkholevm /bin/sh -c "ps aux | grep /usr/sbin/tcpdump"
     sudo docker exec --privileged nfsinkholevm /bin/sh -c "python /usr/bin/nfsinkhole-setup.py --interface eth1 --uninstall --loglevel debug"
     sudo docker exec nfsinkholevm /bin/sh -c "cat /var/log/nfsinkhole-setup.log && rm /var/log/nfsinkhole-setup.log"
+    sudo docker exec nfsinkholevm /bin/sh -c "cat /root/nfsinkhole/.coverage"
     sudo docker exec nfsinkholevm /bin/sh -c "ls -al /root/nfsinkhole"
     sudo docker exec nfsinkholevm /bin/sh -c "ls -al /root/nfsinkhole/nfsinkhole"
     sudo docker exec nfsinkholevm /bin/sh -c "ls -al /"
