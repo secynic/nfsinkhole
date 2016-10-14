@@ -21,7 +21,7 @@ if [ "${TRAVIS_PYTHON_VERSION}" = "2.7" ]; then
     sudo docker exec nfsinkholevm /bin/sh -c "ifconfig"
     sudo docker exec nfsinkholevm /bin/sh -c "ls -al /root/nfsinkhole"
     sudo docker exec nfsinkholevm /bin/sh -c "cd /root/nfsinkhole/ && python setup.py install"
-    sudo docker exec nfsinkholevm /bin/sh -c "nosetests -v -w nfsinkhole --include=docker --with-coverage --cover-package=nfsinkhole"
+    sudo docker exec nfsinkholevm /bin/sh -c "nosetests -v -w /root/nfsinkhole/nfsinkhole --include=docker --with-coverage --cover-package=nfsinkhole"
     sudo docker exec nfsinkholevm /bin/sh -c "COVERALLS_REPO_TOKEN=${COVERALLS_REPO_TOKEN} coveralls --rcfile=.coveragerc"
     sudo docker exec --privileged nfsinkholevm /bin/sh -c "python /usr/bin/nfsinkhole-setup.py --interface eth1 --install --pcap --loglevel debug"
     sudo docker exec nfsinkholevm /bin/sh -c "cat /var/log/nfsinkhole-setup.log && rm /var/log/nfsinkhole-setup.log"
