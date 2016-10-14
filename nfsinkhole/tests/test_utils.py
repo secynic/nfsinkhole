@@ -32,6 +32,7 @@ class TestIPTablesSinkhole(TestCommon):
 
         self.assertNotEqual(get_default_interface(), None)
 
-    def test_timezone(self):
+    def test_set_system_timezone(self):
 
         set_system_timezone('UTC')
+        set_system_timezone('UTC', skip_timedatectl=True)

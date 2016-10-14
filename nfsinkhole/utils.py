@@ -230,12 +230,14 @@ def get_interface_addr(interface=None):
         return None
 
 
-def set_system_timezone(timezone='UTC'):
+def set_system_timezone(timezone='UTC', skip_timedatectl=False):
     """
     The function for setting the system timezone.
 
     Args:
         timezone: The timezone to set, see /usr/share/zoneinfo/* for options.
+        skip_timedatectl: Skip attempting to set the timezone via timedatectl,
+            mainly used for testing.
 
     Raises:
         SubprocessError: One of the processes associated with manual timezone
@@ -244,11 +246,15 @@ def set_system_timezone(timezone='UTC'):
 
     log.info('Setting system timzone to {0}.'.format(timezone))
 
-    # Try setting the timzone with timedatectl
-    cmd = ['timedatectl', 'set-timezone', timezone]
-    out, err = popen_wrapper(cmd, sudo=True)
+    out = None
+    err = None
+    if not skip_timedatectl:
 
-    if out or err:
+        # Try setting the timzone with timedatectl
+        cmd = ['timedatectl', 'set-timezone', timezone]
+        out, err = popen_wrapper(cmd, sudo=True)
+
+    if skip_timedatectl or out or err:
 
         # timedatectl failed or missing, set /etc/localtime manually
         log.info('Reverting to manual timezone config (no timedatectl, or '
