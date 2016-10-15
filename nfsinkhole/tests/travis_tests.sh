@@ -9,8 +9,8 @@ if [ "${TRAVIS_PYTHON_VERSION}" = "2.7" ]; then
     sudo docker network connect sinknet nfsinkholevm
     sudo docker ps -a | grep nfsinkholevm
     sudo docker network ls
-    sudo docker exec nfsinkholevm /bin/sh -c "mkdir /home/travis"
-    sudo docker cp ${TRAVIS_BUILD_DIR} nfsinkholevm:/home/travis/nfsinkhole
+    sudo docker exec nfsinkholevm /bin/sh -c "mkdir /home/travis && mkdir /home/travis/build && mkdir /home/travis/build/secynic"
+    sudo docker cp ${TRAVIS_BUILD_DIR} nfsinkholevm:/home/travis/build/secynic/nfsinkhole
     sudo docker exec nfsinkholevm /bin/sh -c "yum -y -q install net-tools"
     sudo docker exec nfsinkholevm /bin/sh -c "yum -y -q install iptables"
     sudo docker exec nfsinkholevm /bin/sh -c "yum -y -q install tcpdump"
@@ -20,9 +20,9 @@ if [ "${TRAVIS_PYTHON_VERSION}" = "2.7" ]; then
     sudo docker exec nfsinkholevm /bin/sh -c "pip install coverage"
     sudo docker exec nfsinkholevm /bin/sh -c "pip install nose"
     sudo docker exec nfsinkholevm /bin/sh -c "ifconfig"
-    sudo docker exec nfsinkholevm /bin/sh -c "ls -al /home/travis/nfsinkhole"
-    sudo docker exec nfsinkholevm /bin/sh -c "cd /home/travis/nfsinkhole/ && python setup.py install"
-    sudo docker exec nfsinkholevm /bin/sh -c "cd /home/travis/nfsinkhole/ && nosetests -v -w /home/travis/nfsinkhole/nfsinkhole --include=docker --with-coverage --cover-package=nfsinkhole"
+    sudo docker exec nfsinkholevm /bin/sh -c "ls -al /home/travis/build/secynic/nfsinkhole"
+    sudo docker exec nfsinkholevm /bin/sh -c "cd /home/travis/build/secynic/nfsinkhole/ && python setup.py install"
+    sudo docker exec nfsinkholevm /bin/sh -c "cd /home/travis/build/secynic/nfsinkhole/ && nosetests -v -w /home/travis/build/secynic/nfsinkhole/nfsinkhole --include=docker --with-coverage --cover-package=nfsinkhole"
     sudo docker exec --privileged nfsinkholevm /bin/sh -c "python /usr/bin/nfsinkhole-setup.py --interface eth1 --install --pcap --loglevel debug"
     sudo docker exec nfsinkholevm /bin/sh -c "cat /var/log/nfsinkhole-setup.log && rm /var/log/nfsinkhole-setup.log"
     sudo docker exec --privileged nfsinkholevm /bin/sh -c "systemctl start nfsinkhole.service"
@@ -35,12 +35,12 @@ if [ "${TRAVIS_PYTHON_VERSION}" = "2.7" ]; then
     sudo docker exec nfsinkholevm /bin/sh -c "ps aux | grep /usr/sbin/tcpdump"
     sudo docker exec --privileged nfsinkholevm /bin/sh -c "python /usr/bin/nfsinkhole-setup.py --interface eth1 --uninstall --loglevel debug"
     sudo docker exec nfsinkholevm /bin/sh -c "cat /var/log/nfsinkhole-setup.log && rm /var/log/nfsinkhole-setup.log"
-    sudo docker exec nfsinkholevm /bin/sh -c "cat /home/travis/nfsinkhole/.coverage"
-    sudo docker exec nfsinkholevm /bin/sh -c "ls -al /home/travis/nfsinkhole"
-    sudo docker exec nfsinkholevm /bin/sh -c "ls -al /home/travis/nfsinkhole/nfsinkhole"
+    sudo docker exec nfsinkholevm /bin/sh -c "cat /home/travis/build/secynic/nfsinkhole/.coverage"
+    sudo docker exec nfsinkholevm /bin/sh -c "ls -al /home/travis/build/secynic/nfsinkhole"
+    sudo docker exec nfsinkholevm /bin/sh -c "ls -al /home/travis/build/secynic/nfsinkhole/nfsinkhole"
     sudo docker exec nfsinkholevm /bin/sh -c "ls -al /"
     sudo docker exec nfsinkholevm /bin/sh -c "find / -name .coverage"
-    sudo docker cp nfsinkholevm:/home/travis/nfsinkhole/.coverage .
+    sudo docker cp nfsinkholevm:/home/travis/build/secynic/nfsinkhole/.coverage /home/travis/build/secynic/nfsinkhole
     pwd
     ls -al /home
     coveralls --rcfile=.coveragerc
