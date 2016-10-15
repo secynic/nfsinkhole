@@ -35,13 +35,6 @@ if [ "${TRAVIS_PYTHON_VERSION}" = "2.7" ]; then
     sudo docker exec nfsinkholevm /bin/sh -c "ps aux | grep /usr/sbin/tcpdump"
     sudo docker exec --privileged nfsinkholevm /bin/sh -c "python /usr/bin/nfsinkhole-setup.py --interface eth1 --uninstall --loglevel debug"
     sudo docker exec nfsinkholevm /bin/sh -c "cat /var/log/nfsinkhole-setup.log && rm /var/log/nfsinkhole-setup.log"
-    sudo docker exec nfsinkholevm /bin/sh -c "cat /home/travis/build/secynic/nfsinkhole/.coverage"
-    sudo docker exec nfsinkholevm /bin/sh -c "ls -al /home/travis/build/secynic/nfsinkhole"
-    sudo docker exec nfsinkholevm /bin/sh -c "ls -al /home/travis/build/secynic/nfsinkhole/nfsinkhole"
-    sudo docker exec nfsinkholevm /bin/sh -c "ls -al /"
-    sudo docker exec nfsinkholevm /bin/sh -c "find / -name .coverage"
     sudo docker cp nfsinkholevm:/home/travis/build/secynic/nfsinkhole/.coverage /home/travis/build/secynic/nfsinkhole
-    pwd
-    ls -al /home
     coveralls --rcfile=.coveragerc
 fi
