@@ -4,7 +4,7 @@ nfsinkhole
 
 .. image:: https://travis-ci.org/secynic/nfsinkhole.svg?branch=master
     :target: https://travis-ci.org/secynic/nfsinkhole
-.. image:: https://coveralls.io/repos/github/secynic/nfsinkhole/badge.svg?branch=master
+.. image:: https://coveralls.io/repos/github/secynic/nfsinkhole/badge.svg?branch=master&dummy=none
     :target: https://coveralls.io/github/secynic/nfsinkhole?branch=master
 .. image:: https://img.shields.io/badge/license-BSD%202--Clause-blue.svg
     :target: https://github.com/secynic/nfsinkhole/tree/master/LICENSE.txt
