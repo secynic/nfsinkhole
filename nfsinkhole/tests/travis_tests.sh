@@ -19,6 +19,7 @@ if [ "${TRAVIS_PYTHON_VERSION}" = "2.6" ]; then
     docker exec nfsinkholevm /bin/sh -c "yum -y -q install iptables"
     docker exec nfsinkholevm /bin/sh -c "yum -y -q install tcpdump"
     docker exec nfsinkholevm /bin/sh -c "yum -y -q install rsyslog"
+    docker exec nfsinkholevm /bin/sh -c "yum clean all"
     docker exec nfsinkholevm /bin/sh -c "yum -y -q install epel-release && yum clean all"
     docker exec nfsinkholevm /bin/sh -c "yum -y -q install python-pip && yum clean all"
     docker exec nfsinkholevm /bin/sh -c "pip install coverage"
