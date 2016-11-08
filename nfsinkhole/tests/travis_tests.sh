@@ -6,7 +6,7 @@ if [ "${TRAVIS_PYTHON_VERSION}" = "2.6" ]; then
 
     docker pull centos:6
     docker network create --driver=bridge sinknet --subnet=172.19.0.0/24
-    docker run -d -e "container=docker" -v /sys/fs/cgroup:/sys/fs/cgroup --privileged --name nfsinkholevm -t centos:6 /usr/sbin/init
+    docker run -d -e "container=docker" -v /sys/fs/cgroup:/sys/fs/cgroup --privileged --name nfsinkholevm -t centos:6 /sbin/init
     docker network connect sinknet nfsinkholevm
     docker ps -a | grep nfsinkholevm
     docker network ls
