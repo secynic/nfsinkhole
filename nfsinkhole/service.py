@@ -30,7 +30,7 @@ import subprocess
 import sys
 
 log = logging.getLogger(__name__)
-uid = os.geteuid()  # Unix req; autodoc_mock_imports for Sphinx cross platform
+uid = os.geteuid()  # Linux req; autodoc_mock_imports for Sphinx cross platform
 
 # systemd service template
 SYSTEMD_SERVICE_TEMPLATE = (

@@ -36,7 +36,7 @@ from nfsinkhole.service import SystemService
 from nfsinkhole.syslog_ng import SyslogNG
 from nfsinkhole.utils import (ANSI, popen_wrapper, set_system_timezone)
 
-uid = os.geteuid()  # Unix req; autodoc_mock_imports for Sphinx cross platform
+uid = os.geteuid()  # Linux req; autodoc_mock_imports for Sphinx cross platform
 
 scripts_dir = os.path.dirname(os.path.realpath(__file__))
 

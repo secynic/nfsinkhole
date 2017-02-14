@@ -95,7 +95,7 @@ class IPTablesSinkhole:
             List: Matching sinkhole lines returned by iptables -S.
 
         Raises:
-            IPTablesError: A Unix process had an error (stderr).
+            IPTablesError: A Linux process had an error (stderr).
         """
 
         # Get list summary of iptables rules

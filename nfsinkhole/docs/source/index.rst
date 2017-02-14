@@ -2,7 +2,7 @@
 nfsinkhole
 ==========
 
-nfsinkhole is a Python package for setting up a Unix server as a
+nfsinkhole is a Python package for setting up a Linux server as a
 sinkhole (all protocols/ports to a secondary interface).
 
 .. toctree::
