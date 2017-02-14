@@ -6,7 +6,7 @@ if [ "${TRAVIS_PYTHON_VERSION}" = "2.6" ]; then
 
     docker pull centos:6
     docker network create --driver=bridge sinknet --subnet=172.19.0.0/24
-    docker run -d -e "container=docker" -v /sys/fs/cgroup:/sys/fs/cgroup --privileged --name nfsinkholevm -t centos:6 /sbin/init
+    docker run -d -e "container=docker" --privileged --name nfsinkholevm -t centos:6 /sbin/init
     docker network connect sinknet nfsinkholevm
     docker ps -a | grep nfsinkholevm
     docker network ls
@@ -30,12 +30,12 @@ if [ "${TRAVIS_PYTHON_VERSION}" = "2.6" ]; then
     docker exec nfsinkholevm /bin/sh -c "cd /home/travis/build/secynic/nfsinkhole/ && nosetests -v -w /home/travis/build/secynic/nfsinkhole/nfsinkhole --include=docker --with-coverage --cover-package=nfsinkhole"
     docker exec --privileged nfsinkholevm /bin/sh -c "python /usr/bin/nfsinkhole-setup.py --interface eth1 --install --pcap --loglevel debug"
     docker exec nfsinkholevm /bin/sh -c "cat /var/log/nfsinkhole-setup.log && rm /var/log/nfsinkhole-setup.log"
-    docker exec --privileged nfsinkholevm /bin/sh -c "systemctl start nfsinkhole.service"
-    docker exec --privileged nfsinkholevm /bin/sh -c "systemctl status nfsinkhole.service"
+    docker exec --privileged nfsinkholevm /bin/sh -c "service nfsinkhole start"
+    docker exec --privileged nfsinkholevm /bin/sh -c "service nfsinkhole status"
     docker exec nfsinkholevm /bin/sh -c "cat /var/log/nfsinkhole-service.log && rm /var/log/nfsinkhole-service.log"
     docker exec nfsinkholevm /bin/sh -c "ps aux | grep /usr/sbin/tcpdump"
-    docker exec --privileged nfsinkholevm /bin/sh -c "systemctl stop nfsinkhole.service"
-    docker exec --privileged nfsinkholevm /bin/sh -c "systemctl status nfsinkhole.service || true"
+    docker exec --privileged nfsinkholevm /bin/sh -c "service nfsinkhole stop"
+    docker exec --privileged nfsinkholevm /bin/sh -c "service nfsinkhole status || true"
     docker exec nfsinkholevm /bin/sh -c "cat /var/log/nfsinkhole-service.log && rm /var/log/nfsinkhole-service.log"
     docker exec nfsinkholevm /bin/sh -c "ps aux | grep /usr/sbin/tcpdump"
     docker exec --privileged nfsinkholevm /bin/sh -c "python /usr/bin/nfsinkhole-setup.py --interface eth1 --uninstall --loglevel debug"
