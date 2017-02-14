@@ -30,7 +30,7 @@ import subprocess
 import sys
 
 log = logging.getLogger(__name__)
-uid = os.geteuid()  # Unix req; autodoc_mock_imports for Sphinx cross platform
+uid = os.geteuid()  # Linux req; autodoc_mock_imports for Sphinx cross platform
 
 # systemd service template
 SYSTEMD_SERVICE_TEMPLATE = (
@@ -118,7 +118,7 @@ class SystemService:
                  log_prefix='"[nfsinkhole] "',
                  protocol='all', dport='0:65535',
                  hashlimit='1/h', hashlimitmode='srcip,dstip,dstport',
-                 hashlimitburst='1', hashlimitexpire='3600000',
+                 hashlimitburst='1', hashlimitexpire='1800000',
                  srcexclude='127.0.0.1', pcap=True, loglevel='info'
                  ):
 

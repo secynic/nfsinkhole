@@ -23,7 +23,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from .exceptions import SubprocessError
-import fcntl  # Unix req; autodoc_mock_imports for Sphinx cross platform
+import fcntl  # Linux req; autodoc_mock_imports for Sphinx cross platform
 import logging
 import os
 import socket
@@ -31,7 +31,7 @@ import struct
 import subprocess
 
 log = logging.getLogger(__name__)
-uid = os.geteuid()  # Unix req; autodoc_mock_imports for Sphinx cross platform
+uid = os.geteuid()  # Linux req; autodoc_mock_imports for Sphinx cross platform
 
 # CLI ANSI rendering
 ANSI = {
@@ -152,7 +152,7 @@ def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True,
 
 def get_default_interface():
     """
-    The function for getting the default Unix network interface
+    The function for getting the default Linux network interface
     address.
 
     Returns:
@@ -185,7 +185,7 @@ def get_default_interface():
 
 def get_interface_addr(interface=None):
     """
-    The function for automatically determining a Unix network interface
+    The function for automatically determining a Linux network interface
     address.
 
     Args:

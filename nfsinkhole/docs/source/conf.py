@@ -258,7 +258,7 @@ man_pages = [
 texinfo_documents = [
   ('index', 'nfsinkhole', 'nfsinkhole Documentation',
    'secynic', 'nfsinkhole', 'nfsinkhole is a Python package for setting up a '
-                            'Unix server as a sinkhole (all protocols/ports '
+                            'Linux server as a sinkhole (all protocols/ports '
                             'to a secondary interface).',
    'Miscellaneous'),
 ]

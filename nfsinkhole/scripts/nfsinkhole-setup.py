@@ -36,7 +36,7 @@ from nfsinkhole.service import SystemService
 from nfsinkhole.syslog_ng import SyslogNG
 from nfsinkhole.utils import (ANSI, popen_wrapper, set_system_timezone)
 
-uid = os.geteuid()  # Unix req; autodoc_mock_imports for Sphinx cross platform
+uid = os.geteuid()  # Linux req; autodoc_mock_imports for Sphinx cross platform
 
 scripts_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -120,7 +120,7 @@ parser.add_argument(
 parser.add_argument(
     '--hashlimitexpire',
     type=str,
-    default='3600000',
+    default='1800000',
     help='Number of milliseconds to keep entries in the hash table.'
 )
 
