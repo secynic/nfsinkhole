@@ -120,7 +120,7 @@ parser.add_argument(
 parser.add_argument(
     '--hashlimitexpire',
     type=str,
-    default='3600000',
+    default='1800000',
     help='Number of milliseconds to keep entries in the hash table.'
 )
 

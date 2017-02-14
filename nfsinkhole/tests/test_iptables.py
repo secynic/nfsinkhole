@@ -80,7 +80,7 @@ class TestIPTablesSinkhole(TestCommon):
             u'-A INPUT -d 127.0.0.1/32 -i eth1 -p tcp -m hashlimit '
             u'--hashlimit-upto 1/hour --hashlimit-burst 1 --hashlimit-mode '
             u'srcip,dstip,dstport --hashlimit-name sinkhole '
-            u'--hashlimit-htable-expire 3600000 -m multiport '
+            u'--hashlimit-htable-expire 1800000 -m multiport '
             u'--dports 0:53 -j SINKHOLE',
             u'-A SINKHOLE -s 127.0.0.1/32 -j RETURN',
             u'-A SINKHOLE -j LOG --log-prefix "\\"[nfsinkhole] \\""',

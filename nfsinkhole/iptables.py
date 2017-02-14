@@ -63,7 +63,7 @@ class IPTablesSinkhole:
                  log_prefix='"[nfsinkhole] "',
                  protocol='all', dport='0:65535',
                  hashlimit='1/h', hashlimitmode='srcip,dstip,dstport',
-                 hashlimitburst='1', hashlimitexpire='3600000',
+                 hashlimitburst='1', hashlimitexpire='1800000',
                  srcexclude='127.0.0.1'
                  ):
 

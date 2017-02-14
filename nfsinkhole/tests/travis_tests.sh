@@ -26,6 +26,7 @@ if [ "${TRAVIS_PYTHON_VERSION}" = "2.6" ]; then
     docker exec nfsinkholevm /bin/sh -c "pip install nose"
     docker exec nfsinkholevm /bin/sh -c "ifconfig"
     docker exec nfsinkholevm /bin/sh -c "ls -al /home/travis/build/secynic/nfsinkhole"
+    docker exec nfsinkholevm /bin/sh -c "pip install -r /home/travis/build/secynic/nfsinkhole/requirements/python2.6.txt"
     docker exec nfsinkholevm /bin/sh -c "cd /home/travis/build/secynic/nfsinkhole/ && python setup.py install"
     docker exec nfsinkholevm /bin/sh -c "cd /home/travis/build/secynic/nfsinkhole/ && nosetests -v -w /home/travis/build/secynic/nfsinkhole/nfsinkhole --include=docker --with-coverage --cover-package=nfsinkhole"
     docker exec --privileged nfsinkholevm /bin/sh -c "python /usr/bin/nfsinkhole-setup.py --interface eth1 --install --pcap --loglevel debug"
