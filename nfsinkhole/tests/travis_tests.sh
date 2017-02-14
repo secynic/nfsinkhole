@@ -16,7 +16,8 @@ if [ "${TRAVIS_PYTHON_VERSION}" = "2.6" ]; then
 
     docker cp ${TRAVIS_BUILD_DIR} nfsinkholevm:/home/travis/build/secynic/nfsinkhole
     docker exec nfsinkholevm /bin/sh -c "yum -y -q install net-tools"
-    docker exec nfsinkholevm /bin/sh -c "yum -y -q install iptables"
+    docker exec nfsinkholevm /bin/sh -c "yum -y -q install iptables iptables-devel"
+    docker exec nfsinkholevm /bin/sh -c "ls -al /lib/modules/*.el6.x86_64/kernel/net/netfilter/"
     docker exec nfsinkholevm /bin/sh -c "yum -y -q install tcpdump"
     docker exec nfsinkholevm /bin/sh -c "yum -y -q install rsyslog"
     docker exec nfsinkholevm /bin/sh -c "yum clean all"
