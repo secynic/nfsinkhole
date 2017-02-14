@@ -6,7 +6,7 @@ if [ "${TRAVIS_PYTHON_VERSION}" = "2.6" ]; then
 
     docker pull centos:6
     docker network create --driver=bridge sinknet --subnet=172.19.0.0/24
-    docker run -d -e "container=docker" --privileged --name nfsinkholevm -t centos:6 /sbin/init
+    docker run -d -e "container=docker" --privileged --name nfsinkholevm --cap-add=ALL -v /lib/modules:/lib/modules -t centos:6 /sbin/init
     docker network connect sinknet nfsinkholevm
     docker ps -a | grep nfsinkholevm
     docker network ls
@@ -16,8 +16,7 @@ if [ "${TRAVIS_PYTHON_VERSION}" = "2.6" ]; then
 
     docker cp ${TRAVIS_BUILD_DIR} nfsinkholevm:/home/travis/build/secynic/nfsinkhole
     docker exec nfsinkholevm /bin/sh -c "yum -y -q install net-tools"
-    docker exec nfsinkholevm /bin/sh -c "yum -y -q install iptables iptables-devel"
-    docker exec nfsinkholevm /bin/sh -c "ls -al /lib/modules/*.el6.x86_64/kernel/net/netfilter/"
+    docker exec nfsinkholevm /bin/sh -c "yum -y -q install iptables"
     docker exec nfsinkholevm /bin/sh -c "yum -y -q install tcpdump"
     docker exec nfsinkholevm /bin/sh -c "yum -y -q install rsyslog"
     docker exec nfsinkholevm /bin/sh -c "yum clean all"
