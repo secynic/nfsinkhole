@@ -4,9 +4,9 @@ from distutils.core import setup
 import io
 
 NAME = 'nfsinkhole'
-VERSION = '0.1.0'
+VERSION = '0.2.0'
 AUTHOR = 'Philip Hane'
-AUTHOR_EMAIL = 'secynic AT gmail DOT com'
+AUTHOR_EMAIL = 'secynic@gmail.com'
 DESCRIPTION = ('nfsinkhole is a Python library and scripts for setting up a '
                'Linux server as a sinkhole (monitor, log/capture, and drop '
                'all traffic to a secondary interface).')
@@ -36,6 +36,7 @@ CLASSIFIERS = [
     'Programming Language :: Python :: 3.3',
     'Programming Language :: Python :: 3.4',
     'Programming Language :: Python :: 3.5',
+    'Programming Language :: Python :: 3.6',
     'Topic :: Internet',
     'Topic :: Security',
     'Topic :: System :: Networking',

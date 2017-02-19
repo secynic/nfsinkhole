@@ -13,6 +13,7 @@ Changelog
 - Logging output tweaks
 - Fixed redundant TCPDump.check_packet_print() in nfsinkhole-setup.py
 - Simplified utils.set_system_timezone(), removing unnecessary system calls.
+- Python 3.6 support
 
 0.1.0 (2016-08-29)
 ------------------
