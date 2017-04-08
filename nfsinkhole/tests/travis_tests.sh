@@ -113,7 +113,7 @@ elif [ "${TRAVIS_PYTHON_VERSION}" = "3.3" ]; then
     docker exec nfsinkholevm /bin/sh -c "ls -al /home/travis/build/secynic/nfsinkhole"
     docker exec nfsinkholevm /bin/sh -c "cd /home/travis/build/secynic/nfsinkhole/ && python3.3 setup.py install"
     docker exec nfsinkholevm /bin/sh -c "cd /home/travis/build/secynic/nfsinkhole/ && nosetests -v -w /home/travis/build/secynic/nfsinkhole/nfsinkhole --include=docker --with-coverage --cover-package=nfsinkhole"
-    docker exec --privileged nfsinkholevm /bin/sh -c "python3.3 /usr/bin/nfsinkhole-setup.py --interface eth1 --install --pcap --loglevel debug"
+    docker exec --privileged nfsinkholevm /bin/sh -c "python3.3 /usr/local/bin/nfsinkhole-setup.py --interface eth1 --install --pcap --loglevel debug"
     docker exec nfsinkholevm /bin/sh -c "cat /var/log/nfsinkhole-setup.log && rm /var/log/nfsinkhole-setup.log"
     docker exec --privileged nfsinkholevm /bin/sh -c "systemctl start nfsinkhole.service"
     docker exec --privileged nfsinkholevm /bin/sh -c "systemctl status nfsinkhole.service"
@@ -123,7 +123,7 @@ elif [ "${TRAVIS_PYTHON_VERSION}" = "3.3" ]; then
     docker exec --privileged nfsinkholevm /bin/sh -c "systemctl status nfsinkhole.service || true"
     docker exec nfsinkholevm /bin/sh -c "cat /var/log/nfsinkhole-service.log && rm /var/log/nfsinkhole-service.log"
     docker exec nfsinkholevm /bin/sh -c "ps aux | grep /usr/sbin/tcpdump"
-    docker exec --privileged nfsinkholevm /bin/sh -c "python3.3 /usr/bin/nfsinkhole-setup.py --interface eth1 --uninstall --loglevel debug"
+    docker exec --privileged nfsinkholevm /bin/sh -c "python3.3 /usr/local/bin/nfsinkhole-setup.py --interface eth1 --uninstall --loglevel debug"
     docker exec nfsinkholevm /bin/sh -c "cat /var/log/nfsinkhole-setup.log && rm /var/log/nfsinkhole-setup.log"
     docker cp nfsinkholevm:/home/travis/build/secynic/nfsinkhole/.coverage /home/travis/build/secynic/nfsinkhole
     coveralls --rcfile=.coveragerc
