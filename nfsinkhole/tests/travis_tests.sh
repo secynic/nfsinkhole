@@ -84,7 +84,7 @@ elif [ "${TRAVIS_PYTHON_VERSION}" = "2.7" ]; then
     docker cp nfsinkholevm:/home/travis/build/secynic/nfsinkhole/.coverage /home/travis/build/secynic/nfsinkhole
     coveralls --rcfile=.coveragerc
 
-elif [[ ! "${TRAVIS_PYTHON_VERSION}" < "3.3" ]]; then
+elif [[ ! "${TRAVIS_PYTHON_VERSION}" < "3.4" ]]; then
 
     py_stripped_version="$(echo ${TRAVIS_PYTHON_VERSION} | sed -e 's/\.//g')"
     docker pull centos:7
@@ -104,18 +104,17 @@ elif [[ ! "${TRAVIS_PYTHON_VERSION}" < "3.3" ]]; then
     docker exec nfsinkholevm /bin/sh -c "yum -y -q install rsyslog"
     docker exec nfsinkholevm /bin/sh -c "yum -y -q install epel-release && yum clean all"
 
-    docker exec nfsinkholevm /bin/sh -c "yum -y -q install python${py_stripped_version} && yum clean all"
-    docker exec nfsinkholevm /bin/sh -c "curl -O https://bootstrap.pypa.io/get-pip.py"
-    docker exec nfsinkholevm /bin/sh -c "/usr/bin/python${py_stripped_version} get-pip.py"
+    docker exec nfsinkholevm /bin/sh -c "yum install -y https://centos7.iuscommunity.org/ius-release.rpm"
+    docker exec nfsinkholevm /bin/sh -c "yum install -y python${py_stripped_version}u python${py_stripped_version}u-pip"
     docker exec nfsinkholevm /bin/sh -c "yum clean all"
 
-    docker exec nfsinkholevm /bin/sh -c "pip${py_stripped_version} install coverage"
-    docker exec nfsinkholevm /bin/sh -c "pip${py_stripped_version} install nose"
+    docker exec nfsinkholevm /bin/sh -c "pip${TRAVIS_PYTHON_VERSION} install coverage"
+    docker exec nfsinkholevm /bin/sh -c "pip${TRAVIS_PYTHON_VERSION} install nose"
     docker exec nfsinkholevm /bin/sh -c "ifconfig"
     docker exec nfsinkholevm /bin/sh -c "ls -al /home/travis/build/secynic/nfsinkhole"
-    docker exec nfsinkholevm /bin/sh -c "cd /home/travis/build/secynic/nfsinkhole/ && python setup.py install"
+    docker exec nfsinkholevm /bin/sh -c "cd /home/travis/build/secynic/nfsinkhole/ && python${TRAVIS_PYTHON_VERSION} setup.py install"
     docker exec nfsinkholevm /bin/sh -c "cd /home/travis/build/secynic/nfsinkhole/ && nosetests -v -w /home/travis/build/secynic/nfsinkhole/nfsinkhole --include=docker --with-coverage --cover-package=nfsinkhole"
-    docker exec --privileged nfsinkholevm /bin/sh -c "python /usr/bin/nfsinkhole-setup.py --interface eth1 --install --pcap --loglevel debug"
+    docker exec --privileged nfsinkholevm /bin/sh -c "python${TRAVIS_PYTHON_VERSION} /usr/bin/nfsinkhole-setup.py --interface eth1 --install --pcap --loglevel debug"
     docker exec nfsinkholevm /bin/sh -c "cat /var/log/nfsinkhole-setup.log && rm /var/log/nfsinkhole-setup.log"
     docker exec --privileged nfsinkholevm /bin/sh -c "systemctl start nfsinkhole.service"
     docker exec --privileged nfsinkholevm /bin/sh -c "systemctl status nfsinkhole.service"
@@ -125,7 +124,7 @@ elif [[ ! "${TRAVIS_PYTHON_VERSION}" < "3.3" ]]; then
     docker exec --privileged nfsinkholevm /bin/sh -c "systemctl status nfsinkhole.service || true"
     docker exec nfsinkholevm /bin/sh -c "cat /var/log/nfsinkhole-service.log && rm /var/log/nfsinkhole-service.log"
     docker exec nfsinkholevm /bin/sh -c "ps aux | grep /usr/sbin/tcpdump"
-    docker exec --privileged nfsinkholevm /bin/sh -c "python /usr/bin/nfsinkhole-setup.py --interface eth1 --uninstall --loglevel debug"
+    docker exec --privileged nfsinkholevm /bin/sh -c "python${TRAVIS_PYTHON_VERSION} /usr/bin/nfsinkhole-setup.py --interface eth1 --uninstall --loglevel debug"
     docker exec nfsinkholevm /bin/sh -c "cat /var/log/nfsinkhole-setup.log && rm /var/log/nfsinkhole-setup.log"
     docker cp nfsinkholevm:/home/travis/build/secynic/nfsinkhole/.coverage /home/travis/build/secynic/nfsinkhole
     coveralls --rcfile=.coveragerc
