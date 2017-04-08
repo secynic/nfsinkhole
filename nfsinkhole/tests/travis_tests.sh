@@ -84,7 +84,7 @@ elif [ "${TRAVIS_PYTHON_VERSION}" = "2.7" ]; then
     docker cp nfsinkholevm:/home/travis/build/secynic/nfsinkhole/.coverage /home/travis/build/secynic/nfsinkhole
     coveralls --rcfile=.coveragerc
 
-elif [ "${TRAVIS_PYTHON_VERSION}" >= "3.3" ]; then
+elif [ "${TRAVIS_PYTHON_VERSION}" -gt "3.3" ]; then
 
     py_stripped_version="$(echo ${TRAVIS_PYTHON_VERSION} | sed -e 's/\.//g')"
     docker pull centos:7
