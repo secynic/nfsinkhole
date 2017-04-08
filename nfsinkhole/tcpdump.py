@@ -54,7 +54,7 @@ class TCPDump:
         log.info('Checking tcpdump/nflog packet printing support.')
 
         tcpdump_version = self.get_version()
-        if not tcpdump_version or tcpdump_version < '4.5':
+        if not tcpdump_version or tcpdump_version < b'4.5':
 
             log.warn('Packet printing is not supported. Consider upgrading '
                      'your kernel/tcpdump.')
