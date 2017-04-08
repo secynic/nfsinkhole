@@ -68,7 +68,7 @@ class RSyslog:
         if out and len(out) > 0:
 
             log.debug('Attempting to parse version number from stdout')
-            m = re.search('rsyslogd\s([0-9]+\.[0-9]+\.[0-9]+),', out)
+            m = re.search(b'rsyslogd\s([0-9]+\.[0-9]+\.[0-9]+),', out)
             try:
 
                 rsyslog_version = m.group(1)
