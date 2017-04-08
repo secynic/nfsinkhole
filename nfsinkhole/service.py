@@ -171,7 +171,7 @@ class SystemService:
         service = open('nfsinkhole.service', "w")
         with service:
 
-            fp = sys.executable
+            fp = os.path.dirname(sys.executable)
 
             # Raise error if rsyslogd is not found
             if not os.path.exists('{0}/nfsinkhole-service.py'.format(fp)):
@@ -183,12 +183,8 @@ class SystemService:
                 else:
 
                     log.debug('Path not found: {0}/nfsinkhole-service.py'
-                              ).format(fp)
+                              ''.format(fp))
                     raise BinaryNotFound('Service file was not detected.')
-
-            else:
-
-                fp = os.path.dirname(fp)
 
             # Run pre main process execution
             execstartpre = (
