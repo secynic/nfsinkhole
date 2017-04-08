@@ -80,9 +80,9 @@ class TCPDump:
             for o in out.splitlines():
 
                 # TODO: eliminate loop, re search the whole output
-                if 'tcpdump version' in o:
+                if b'tcpdump version' in o:
 
-                    m = re.search('tcpdump\sversion\s([0-9]+\.[0-9]+)?.*', o)
+                    m = re.search(b'tcpdump\sversion\s([0-9]+\.[0-9]+)?.*', o)
                     try:
 
                         tcpdump_version = m.group(1)
