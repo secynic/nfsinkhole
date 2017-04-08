@@ -78,7 +78,7 @@ def popen_wrapper(cmd_arr=None, raise_err=False, log_stdout_line=True,
 
     # If sudo, run /usr/bin/sudo if not root
     if sudo and uid != 0:
-        cmd_arr = ['/usr/bin/sudo'] + cmd_arr
+        cmd_arr = ['/usr/bin/sudo'] + cmd_arr  # pragma: no cover
 
     # Create a subprocess for the command, piping stdout, with stderr to
     # stdout for logging.
