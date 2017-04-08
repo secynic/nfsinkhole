@@ -84,7 +84,7 @@ elif [ "${TRAVIS_PYTHON_VERSION}" = "2.7" ]; then
     docker cp nfsinkholevm:/home/travis/build/secynic/nfsinkhole/.coverage /home/travis/build/secynic/nfsinkhole
     coveralls --rcfile=.coveragerc
 
-elif [[ ! "${TRAVIS_PYTHON_VERSION}" = "3.3" ]]; then
+elif [ "${TRAVIS_PYTHON_VERSION}" = "3.3" ]; then
 
     docker pull centos:7
     docker network create --driver=bridge sinknet --subnet=172.19.0.0/24
