@@ -102,7 +102,7 @@ elif [ "${TRAVIS_PYTHON_VERSION}" = "3.3" ]; then
     docker exec nfsinkholevm /bin/sh -c "apt-get install -y iptables"
     docker exec nfsinkholevm /bin/sh -c "apt-get install -y tcpdump"
     docker exec nfsinkholevm /bin/sh -c "apt-get install -y rsyslog"
-    docker exec nfsinkholevm /bin/sh -c "apt-get install -y python-software-properties"
+    docker exec nfsinkholevm /bin/sh -c "apt-get install -y software-properties-common python-software-properties"
     docker exec nfsinkholevm /bin/sh -c "add-apt-repository -y ppa:fkrull/deadsnakes"
     docker exec nfsinkholevm /bin/sh -c "apt-get update"
     docker exec nfsinkholevm /bin/sh -c "apt-get install -y python3.3 python3.3-dev python3-pip"
