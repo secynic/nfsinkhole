@@ -107,8 +107,8 @@ elif [ "${TRAVIS_PYTHON_VERSION}" = "3.3" ]; then
     docker exec nfsinkholevm /bin/sh -c "apt-get update"
     docker exec nfsinkholevm /bin/sh -c "apt-get install -y python3.3 python3.3-dev python3-pip"
 
-    docker exec nfsinkholevm /bin/sh -c "pip3.3 install coverage"
-    docker exec nfsinkholevm /bin/sh -c "pip3.3 install nose"
+    docker exec nfsinkholevm /bin/sh -c "pip3 install coverage"
+    docker exec nfsinkholevm /bin/sh -c "pip3 install nose"
     docker exec nfsinkholevm /bin/sh -c "ifconfig"
     docker exec nfsinkholevm /bin/sh -c "ls -al /home/travis/build/secynic/nfsinkhole"
     docker exec nfsinkholevm /bin/sh -c "cd /home/travis/build/secynic/nfsinkhole/ && python3.3 setup.py install"
