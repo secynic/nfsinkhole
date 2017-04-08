@@ -86,7 +86,7 @@ elif [ "${TRAVIS_PYTHON_VERSION}" = "2.7" ]; then
 
 elif [ "${TRAVIS_PYTHON_VERSION}" = "3.3" ]; then
 
-    docker pull centos:7
+    docker pull ubuntu:16.04
     docker network create --driver=bridge sinknet --subnet=172.19.0.0/24
     docker run -d -e "container=docker" -v /sys/fs/cgroup:/sys/fs/cgroup --privileged --name nfsinkholevm -t ubuntu:16.04 /sbin/init
     docker network connect sinknet nfsinkholevm
@@ -97,6 +97,7 @@ elif [ "${TRAVIS_PYTHON_VERSION}" = "3.3" ]; then
     docker exec nfsinkholevm /bin/sh -c "mkdir /home/travis && mkdir /home/travis/build && mkdir /home/travis/build/secynic"
 
     docker cp ${TRAVIS_BUILD_DIR} nfsinkholevm:/home/travis/build/secynic/nfsinkhole
+    docker exec nfsinkholevm /bin/sh -c "apt-get update"
     docker exec nfsinkholevm /bin/sh -c "apt-get install -y net-tools"
     docker exec nfsinkholevm /bin/sh -c "apt-get install -y iptables"
     docker exec nfsinkholevm /bin/sh -c "apt-get install -y tcpdump"
