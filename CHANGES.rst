@@ -6,12 +6,15 @@ Changelog
 
 - Added syslog-ng support (#2)
 - Added sudo arg to utils.popen_wrapper() - code consolidation
-- Adding loglevel argument to scripts and service.SystemService (#5). Defaults
+- Added loglevel argument to scripts and service.SystemService (#5). Defaults
   to info. Travis defaults to debug.
+- Added Ubuntu/Debian docker tests to Travis
 - Fixed bytes to str decoding issue on Python 3
 - Fixed splitlines list[bytes] decode on Python 3
 - Logging output tweaks
 - Fixed redundant TCPDump.check_packet_print() in nfsinkhole-setup.py
+- Fixed bytes-string comparison issues in Python 2 vs 3
+- Fixed filepath checks in service.py
 - Simplified utils.set_system_timezone(), removing unnecessary system calls.
 - Python 3.6 support
 
