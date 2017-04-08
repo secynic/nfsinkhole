@@ -46,9 +46,10 @@ class RSyslog:
         self.is_systemd = is_systemd
 
         # Raise error if rsyslogd is not found
-        if not os.path.exists('/sbin/rsyslogd'):
+        if not os.path.exists('/sbin/rsyslogd') and not (
+                os.path.exists('/usr/sbin/rsyslogd')):
 
-            log.debug('Path not found: /sbin/rsyslogd')
+            log.debug('Path not found: /sbin/rsyslogd or /usr/sbin/rsyslogd')
             raise BinaryNotFound('rsyslogd was not detected.')
 
     def get_version(self):

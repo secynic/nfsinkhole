@@ -47,9 +47,10 @@ class SyslogNG:
         self.is_systemd = is_systemd
 
         # Raise error if syslog-ng is not found
-        if not os.path.exists('/sbin/syslog-ng'):
+        if not os.path.exists('/sbin/syslog-ng') and not (
+                os.path.exists('/usr/sbin/syslog-ng')):
 
-            log.debug('Path not found: /sbin/syslog-ng')
+            log.debug('Path not found: /sbin/syslog-ng or /usr/sbin/syslog-ng')
             raise BinaryNotFound('syslog-ng was not detected.')
 
     def get_version(self):
