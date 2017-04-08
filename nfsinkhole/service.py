@@ -174,7 +174,7 @@ class SystemService:
             fp = sys.executable
 
             # Raise error if rsyslogd is not found
-            if not os.path.exists('{0}/nfsinkhole-service.py').format(fp):
+            if not os.path.exists('{0}/nfsinkhole-service.py'.format(fp)):
 
                 if os.path.exists('/usr/local/bin/nfsinkhole-service.py'):
 
